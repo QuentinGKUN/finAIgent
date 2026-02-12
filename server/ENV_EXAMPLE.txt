@@ -1,0 +1,45 @@
+# ============================================
+# 财务分析智能助手配置文件
+# ============================================
+# 复制此文件为 .env 并填写实际配置值
+# 或者直接创建 .env 文件并复制以下内容
+
+# ============================================
+# AI配置
+# ============================================
+# Gemini API Key（用于AI对话和任务路由）
+GLM_KEY=your_gemini_api_key_here
+
+# ============================================
+# Tushare配置
+# ============================================
+# Tushare API Token（用于获取A股财务数据）
+TUSHARE_TOKEN=fb21391f810bee022b33e8907850afe18ee68833bd3e1f897f16c3224094
+# Tushare API 自定义URL（如果使用代理或自定义服务器）
+TUSHARE_API_URL=http://lianghua.nanyangqiankun.top
+# Tushare API 官方URL（默认，如果使用官方API则注释掉上面的TUSHARE_API_URL）
+# TUSHARE_API_URL=http://api.tushare.pro
+
+# ============================================
+# SEC配置（美股数据）
+# ============================================
+# SEC API User-Agent（必须设置，建议使用你的邮箱）
+SEC_USER_AGENT=FinAssistantChampion/1.0 (email: your_email@example.com)
+
+# ============================================
+# 服务配置
+# ============================================
+# Express服务端口
+PORT=3000
+# Go服务URL（美股数据服务）
+GO_SERVICE_URL=http://localhost:3001
+# Go服务端口
+GO_PORT=3001
+# SQLite数据库路径
+SQLITE_PATH=../data/app.db
+
+# ============================================
+# 可选配置
+# ============================================
+# 环境（development/production）
+NODE_ENV=development

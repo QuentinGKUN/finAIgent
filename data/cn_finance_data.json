@@ -1,0 +1,79 @@
+{
+  "300750.SZ": {
+    "name": "宁德时代",
+    "data": [
+      {
+        "year": 2021,
+        "revenue": 130355800000,
+        "gross_profit": 30420000000,
+        "operating_income": 15931000000,
+        "net_income": 15931000000,
+        "rd": 7682000000,
+        "total_assets": 307400000000,
+        "total_liabilities": 192200000000,
+        "unit": "CNY"
+      },
+      {
+        "year": 2022,
+        "revenue": 328593200000,
+        "gross_profit": 71570000000,
+        "operating_income": 30729000000,
+        "net_income": 30729000000,
+        "rd": 15510000000,
+        "total_assets": 591000000000,
+        "total_liabilities": 390100000000,
+        "unit": "CNY"
+      },
+      {
+        "year": 2023,
+        "revenue": 400917000000,
+        "gross_profit": 100000000000,
+        "operating_income": 44121000000,
+        "net_income": 44121000000,
+        "rd": 18356000000,
+        "total_assets": 724000000000,
+        "total_liabilities": 478000000000,
+        "unit": "CNY"
+      }
+    ]
+  },
+  "600519.SH": {
+    "name": "贵州茅台",
+    "data": [
+      {
+        "year": 2021,
+        "revenue": 109464000000,
+        "gross_profit": 93465000000,
+        "operating_income": 74528000000,
+        "net_income": 52460000000,
+        "rd": 0,
+        "total_assets": 255100000000,
+        "total_liabilities": 45600000000,
+        "unit": "CNY"
+      },
+      {
+        "year": 2022,
+        "revenue": 127561000000,
+        "gross_profit": 108000000000,
+        "operating_income": 87695000000,
+        "net_income": 62716000000,
+        "rd": 0,
+        "total_assets": 254500000000,
+        "total_liabilities": 36000000000,
+        "unit": "CNY"
+      },
+      {
+        "year": 2023,
+        "revenue": 150560000000,
+        "gross_profit": 130000000000,
+        "operating_income": 103500000000,
+        "net_income": 74734000000,
+        "rd": 0,
+        "total_assets": 272300000000,
+        "total_liabilities": 38000000000,
+        "unit": "CNY"
+      }
+    ]
+  },
+  "note": "这是一个示例文件。你可以从Tushare、Baostock等API获取完整的财务数据，或从公司年报中提取。格式：{\"股票代码\": {\"name\": \"公司名称\", \"data\": [{\"year\": 年份, \"revenue\": 营收, \"gross_profit\": 毛利润, ...}]}}"
+}

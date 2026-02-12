@@ -1,0 +1,55 @@
+{
+  "stocks": [
+    {
+      "code": "300750.SZ",
+      "name": "宁德时代",
+      "market": "SZ"
+    },
+    {
+      "code": "000001.SZ",
+      "name": "平安银行",
+      "market": "SZ"
+    },
+    {
+      "code": "000002.SZ",
+      "name": "万科A",
+      "market": "SZ"
+    },
+    {
+      "code": "600000.SH",
+      "name": "浦发银行",
+      "market": "SH"
+    },
+    {
+      "code": "600036.SH",
+      "name": "招商银行",
+      "market": "SH"
+    },
+    {
+      "code": "600519.SH",
+      "name": "贵州茅台",
+      "market": "SH"
+    },
+    {
+      "code": "000858.SZ",
+      "name": "五粮液",
+      "market": "SZ"
+    },
+    {
+      "code": "002415.SZ",
+      "name": "海康威视",
+      "market": "SZ"
+    },
+    {
+      "code": "300059.SZ",
+      "name": "东方财富",
+      "market": "SZ"
+    },
+    {
+      "code": "002594.SZ",
+      "name": "比亚迪",
+      "market": "SZ"
+    }
+  ],
+  "note": "这是一个示例文件。你可以从Tushare、Baostock等API获取完整的A股列表，或从公开数据源下载。格式：{\"stocks\": [{\"code\": \"股票代码.SZ/SH\", \"name\": \"公司名称\", \"market\": \"SZ/SH\"}]}"
+}
