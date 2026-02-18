@@ -9,9 +9,9 @@
 ### AI配置
 
 #### GLM_KEY
-- **说明**: Gemini API Key，用于AI对话和任务路由
+- **说明**: 智谱GLM API Key，用于AI对话和任务路由
 - **必需**: 是
-- **示例**: `GLM_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
+- **示例**: `GLM_KEY=your_glm_api_key_here`
 
 ### Tushare配置
 
@@ -70,7 +70,7 @@
 ### 最小配置（仅必需项）
 
 ```env
-GLM_KEY=your_gemini_api_key_here
+GLM_KEY=your_glm_api_key_here
 SEC_USER_AGENT=FinAssistantChampion/1.0 (email: your_email@example.com)
 ```
 
@@ -78,7 +78,7 @@ SEC_USER_AGENT=FinAssistantChampion/1.0 (email: your_email@example.com)
 
 ```env
 # AI配置
-GLM_KEY=your_gemini_api_key_here
+GLM_KEY=your_glm_api_key_here
 
 # Tushare配置
 TUSHARE_TOKEN=your_tushare_token_here

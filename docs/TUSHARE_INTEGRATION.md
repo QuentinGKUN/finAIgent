@@ -26,7 +26,7 @@ const apiUrl = config.tushare.apiUrl;
 
 ### 必需配置项
 
-1. **GLM_KEY**: Gemini API Key（AI对话）
+1. **GLM_KEY**: 智谱GLM API Key（AI对话）
 2. **SEC_USER_AGENT**: SEC API User-Agent（美股数据）
 3. **TUSHARE_TOKEN**: Tushare API Token（A股数据，可选）
 4. **TUSHARE_API_URL**: Tushare API地址（可选，支持自定义代理）

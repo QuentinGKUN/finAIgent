@@ -13,5 +13,5 @@ start "web" cmd /k "cd web && python -m http.server 5173"
 
 echo.
 echo ✅ 打开浏览器 http://localhost:5173
-echo 右上角设置 Gemini Key，然后提问；可导出投研PDF（Ctrl+P 保存为PDF）
+echo 右上角设置 GLM Key，然后提问；可导出投研PDF（Ctrl+P 保存为PDF）
 pause

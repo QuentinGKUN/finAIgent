@@ -51,6 +51,7 @@ export async function getTopRevenueCNFromLocalCSV({year, limit=10} = {}){
   const unit = picked[0]?.unit || "CNY_million";
   return {
     year: Number(targetYear),
+    metric: "Revenue",
     unit,
     source: {title:"本地榜单CSV", url:"local:data/cn_top_revenue.csv"},
     items

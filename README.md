@@ -1,5 +1,5 @@
 # 财务分析智能助手（冠军版）
-Go + Express + SQLite + Gemini  
+Go + Express + SQLite + GLM  
 能力：年报RAG（FTS5+Embedding重排）+ SEC财务时间序列 + 派生指标 + 多轮对话 + 引用溯源 + 投研报告导出（打印保存PDF）+ **A股支持**
 
 ## 核心功能
@@ -47,7 +47,7 @@ npm i
 # Windows: copy ENV_EXAMPLE.txt .env
 # Linux/Mac: cp ENV_EXAMPLE.txt .env
 # 然后编辑 .env 文件，填写以下配置：
-#   - GLM_KEY: 你的Gemini API Key
+#   - GLM_KEY: 你的智谱GLM API Key
 #   - TUSHARE_TOKEN: 你的Tushare Token（可选，如果使用本地JSON文件则不需要）
 #   - TUSHARE_API_URL: Tushare API地址（默认使用官方，或使用自定义代理）
 #   - SEC_USER_AGENT: 你的邮箱/联系方式（必须设置）
@@ -61,7 +61,7 @@ python -m http.server 5173
 ```
 
 浏览器打开：http://localhost:5173
-右上角【设置】填写 Gemini API Key
+右上角【设置】填写 GLM API Key
 
 ## 数据文件配置
 

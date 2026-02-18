@@ -1,98 +1,64 @@
 <!doctype html>
 <html lang="zh-Hans">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>财务分析智能助手（冠军版）</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Fin Assistant Champion</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    .glass{backdrop-filter:blur(12px);background:rgba(255,255,255,.75)}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-  </style>
+html,body{overflow-x:hidden}
+    #messages{overflow-x:hidden}
+    .msg{line-height:1.6;font-size:14px;word-break:break-word;overflow-wrap:anywhere}
+    .msg pre,.msg code{white-space:pre-wrap;word-break:break-word}
+
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+  .msg{line-height:1.55;font-size:14px}
+.msg ul{list-style:disc;margin-left:18px}
+.msg ol{list-style:decimal;margin-left:18px}
+.msg li{margin:4px 0}
+.msg a{ text-decoration: underline; }
+
+</style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900">
-<header class="sticky top-0 z-10 border-b border-slate-200 bg-white/70 glass">
-  <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="h-9 w-9 rounded-xl bg-slate-900 text-white grid place-items-center font-semibold">财</div>
-      <div>
-        <div class="font-semibold leading-tight">财务分析智能助手（冠军版）</div>
-        <div class="text-xs text-slate-500">年报RAG + 财务序列 + 引用溯源 + 多轮对话 + 投研PDF导出</div>
+<body class="bg-slate-50 text-slate-900">
+  <div class="max-w-5xl mx-auto p-4 md:p-8">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-xl font-semibold">财务分析智能助手（Champion）</h1>
+      <div class="flex gap-2">
+        <button id="btnNew" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100">新对话</button>
+        <button id="btnHistory" class="px-3 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-100">查看历史</button>
+        <button id="btnExport" class="px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">导出报告</button>
       </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button id="btnExport" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-sm">导出投研PDF</button>
-      <button id="btnSettings" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-sm">设置</button>
-      <button id="btnNew" class="px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-sm">新对话</button>
-    </div>
-  </div>
-</header>
 
-<main class="mx-auto max-w-6xl px-4 py-5 grid md:grid-cols-3 gap-4">
-  <section class="md:col-span-2">
-    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div id="messages" class="h-[60vh] overflow-auto p-4 space-y-4"></div>
-      <div class="border-t border-slate-200 p-3">
-        <form id="form" class="flex gap-2">
-          <input id="input" class="flex-1 rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-200" placeholder="例如：Apple 在年报中提到的核心竞争力有哪些？" />
-          <button class="rounded-xl bg-slate-900 text-white px-4 py-3 hover:bg-slate-800">发送</button>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-4">
+        <div id="messages" class="space-y-3 h-[520px] overflow-auto pr-2 overflow-x-hidden"></div>
+
+        <form id="form" class="mt-4 flex gap-2">
+          <input id="input" class="flex-1 rounded-xl border border-slate-200 px-4 py-3 min-w-0 w-full" placeholder="输入问题，例如：TSLA 最新10-K 风险因素要点？"/>
+          <button class="px-4 py-3 rounded-xl bg-slate-900 text-white hover:bg-slate-800">发送</button>
         </form>
-        <div class="mt-2 text-xs text-slate-500">完成一次回答后，可点“导出投研PDF”。</div>
-      </div>
-    </div>
 
-    <div class="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
-      <div class="font-semibold">财务图表</div>
-      <canvas id="chart" class="mt-3"></canvas>
-      <div id="chartNote" class="mt-2 text-xs text-slate-500">当回答包含 chart 数据时，会自动绘图。</div>
-    </div>
-  </section>
+        <div class="text-xs text-slate-500 mt-2">
+          API Key 全部由服务端 <span class="mono">server/.env</span> 管理；如需启用年报 embedding 重排，请在 <span class="mono">server/.env</span> 配置 <span class="mono">GOOGLE_API_KEY</span>。
+        </div>
 
-  <aside class="space-y-4">
-    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
-      <div class="font-semibold">一键演示题</div>
-      <ul class="mt-2 text-sm text-slate-700 space-y-2 list-disc list-inside">
-        <li><button class="demo underline decoration-dotted" data-q="Tesla 的主要业务风险是什么？">Tesla 的主要业务风险是什么？</button></li>
-        <li><button class="demo underline decoration-dotted" data-q="Google 过去三年的收入同比（YoY）如何？并给出三年CAGR。">Google 收入YoY + CAGR</button></li>
-        <li><button class="demo underline decoration-dotted" data-q="结合年报提到的风险，分析 Tesla 过去三年的研发投入占比是否有效？">综合分析 Tesla 研发有效性</button></li>
-      </ul>
-    </div>
+        <div class="mt-3 flex flex-wrap gap-2 text-xs">
+          <button class="demo px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100" data-q="TSLA 最新10-K 风险因素要点？">年报要点</button>
+          <button class="demo px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100" data-q="对比 Apple 和 Microsoft 近三年 Revenue 趋势，并给出结论">财务对比</button>
+          <button class="demo px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100" data-q="给我中国公司营收榜单Top10（2026）并画柱状图">国内榜单</button>
+        </div>
+      </div>
 
-    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-4">
-      <div class="font-semibold">提示</div>
-      <div class="mt-2 text-sm text-slate-700">
-        导出方式：打开报告页后 Ctrl+P / ⌘P → 另存为 PDF（避免中文乱码/依赖问题）。
+      <div class="bg-white border border-slate-200 rounded-2xl p-4">
+        <div class="font-medium mb-2">图表</div>
+        <canvas id="chart" height="260"></canvas>
+        <div id="chartNote" class="text-xs text-slate-500 mt-2">暂无图表</div>
       </div>
-    </div>
-  </aside>
-</main>
-
-<!-- Settings Modal -->
-<div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/30 p-4">
-  <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl border border-slate-200">
-    <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-      <div class="font-semibold">设置</div>
-      <button id="btnClose" class="px-2 py-1 rounded-lg hover:bg-slate-50">✕</button>
-    </div>
-    <div class="p-4 space-y-4">
-      <div>
-        <label class="text-sm font-medium">Gemini API Key（仅保存在浏览器 LocalStorage）</label>
-        <input id="apiKey" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 mono" placeholder="AIzaSy..." />
-      </div>
-      <div>
-        <label class="text-sm font-medium">模型</label>
-        <select id="model" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3">
-          <option value="gemini-1.5-flash">gemini-1.5-flash（快）</option>
-          <option value="gemini-1.5-pro">gemini-1.5-pro（强）</option>
-        </select>
-      </div>
-    </div>
-    <div class="p-4 border-t border-slate-200 flex justify-end gap-2">
-      <button id="btnSave" class="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">保存</button>
     </div>
   </div>
-</div>
 
 <script type="module">
 const API_BASE = 'http://localhost:3000/api';
@@ -102,64 +68,125 @@ const $ = s => document.querySelector(s);
 const messagesEl = $('#messages');
 const inputEl = $('#input');
 
-function esc(s=''){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]))}
+function esc(s=''){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]));}
 
 function addBubble(role, html){
-  const wrap = document.createElement('div');
-  wrap.className = role==='user' ? 'flex justify-end' : 'flex justify-start';
-  const b = document.createElement('div');
-  b.className = role==='user'
-    ? 'max-w-[85%] rounded-2xl bg-slate-900 text-white px-4 py-3 shadow-sm'
-    : 'max-w-[85%] rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 shadow-sm';
-  b.innerHTML = html;
-  wrap.appendChild(b);
-  messagesEl.appendChild(wrap);
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user'
+    ? 'bg-slate-900 text-white rounded-2xl p-3 ml-10'
+    : 'bg-slate-50 border border-slate-200 rounded-2xl p-3 mr-10');
+  div.innerHTML = html;
+  messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 async function ensureSession(){
-  if(sessionId) return sessionId;
-  const r = await fetch(`${API_BASE}/session`, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+  if(sessionId) return;
+  const r = await fetch(`${API_BASE}/session`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({})
+  });
   const d = await r.json();
+  console.log('[UI] response', d);
   sessionId = d.sessionId;
   localStorage.setItem('fa_sessionId', sessionId);
-  return sessionId;
 }
 
-let chart;
+let chart = null;
+
 function renderChart(chartData){
-  if(!chartData || !chartData.series?.length) return;
-  const ctx = document.getElementById('chart');
-  const labels = chartData.series[0].points.map(p=>p.year);
-  const datasets = chartData.series.map(s=>({ label: s.metric, data: s.points.map(p=>p.value) }));
+  if(!chartData || !chartData.series?.length) {
+    document.getElementById('chartNote').innerText = '暂无图表';
+    return;
+  }
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+
+  // 统一所有 series 的 x 轴
+  const xs = new Set();
+  for(const s of chartData.series){
+    for(const p of (s.points||[])){
+      xs.add(p.x);
+    }
+  }
+  let labels = Array.from(xs);
+
+  // 如果都是数字/可转数字，按数值排序
+  const allNumeric = labels.every(v => (typeof v === 'number') || (String(v).trim() !== '' && !Number.isNaN(Number(v))));
+  if(allNumeric){
+    labels = labels.map(v=>Number(v)).sort((a,b)=>a-b);
+  } else {
+    labels = labels.map(v=>String(v));
+  }
+
+  const datasets = chartData.series.map(s=> {
+    const mp = new Map((s.points||[]).map(p=>[allNumeric?Number(p.x):String(p.x), p.y]));
+    const data = labels.map(x => mp.has(x) ? mp.get(x) : null);
+    return { label: s.name, data };
+  });
+
   if(chart) chart.destroy();
-  chart = new Chart(ctx, {type:'line', data:{labels, datasets}, options:{responsive:true}});
+  chart = new Chart(ctx, {
+    type: chartData.type || 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: { display: !!chartData.title, text: chartData.title || '' }
+      },
+      scales: {
+        x: {
+          ticks: { autoSkip: true, maxRotation: 0 },
+          title: { display: true, text: chartData.xLabel || '年度' }
+        },
+        y: {
+          title: { display: true, text: chartData.yLabel || '数值' }
+        }
+      }
+    }
+  });
+
   document.getElementById('chartNote').innerText = chartData.title || '图表已更新';
 }
 
 function renderAssistant(payload){
-  const {answer, citations} = payload;
-  const citeHtml = (citations||[]).length ? `
+  const {answer, citations, table} = payload;
+
+  const tableHtml = (table && Array.isArray(table.columns) && Array.isArray(table.rows)) ? `
     <div class="mt-3 pt-3 border-t border-slate-200">
-      <div class="text-xs font-semibold text-slate-600">引用 / 来源</div>
-      <ul class="mt-2 space-y-1 text-xs text-slate-600">
-        ${(citations||[]).map(c=>`
-          <li>
-            <span class="mono">${esc(c.id||'')}</span>
-            <span class="ml-2">${esc(c.title||c.type||'')}</span>
-            ${c.url ? `<a class="ml-2 underline decoration-dotted" href="${esc(c.url)}" target="_blank">打开</a>` : ''}
-          </li>
-        `).join('')}
+      <div class="text-xs font-medium text-slate-600 mb-2">数据表格（自动抽取）</div>
+      <div class="text-xs text-slate-500 mb-2">不会改变回答内容；仅在检测到趋势/时间序列/排名等数据时才显示。</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs border-collapse bg-white">
+          <thead><tr>
+            ${table.columns.map(c=>`<th class="border border-slate-200 px-2 py-1 text-left">${esc(String(c))}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${table.rows.map(r=>`<tr>${(r||[]).map(c=>`<td class="border border-slate-200 px-2 py-1">${esc(String(c))}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ` : '';
+  const citeHtml = (citations||[]).length ? `
+    <div class="text-xs text-slate-500">引用说明：D=年报片段证据，F=财务数据来源，R=榜单/排名数据来源。</div>`
+    + `
+    <div class="mt-3 pt-3 border-t border-slate-200">
+      <div class="text-xs font-medium text-slate-600 mb-2">引用</div>
+      <ul class="text-xs text-slate-600 space-y-1">
+        ${(citations||[]).map(c=>{const t=(c.type||""); const label=t==="annual_report"?"年报证据":(t==="sec_companyfacts"||t==="cn_finance"?"财务数据":(t==="ranking"?"榜单数据":"引用")); return `<li><span class="font-semibold">${label}</span>：${esc(c.title||"")}${c.url?` <a class="text-slate-900 underline" target="_blank" href="${esc(c.url)}">打开</a>`:""}</li>`;}).join("")}
       </ul>
-    </div>` : '';
-  addBubble('assistant', `<div>${esc(answer||'').replace(/\n/g,'<br/>')}</div>${citeHtml}`);
+    </div>
+  ` : '';
+
+  addBubble('assistant', `<div>${esc(answer||'').replace(/\n/g,'<br/>')}</div>${tableHtml}${citeHtml}`);
   renderChart(payload.chart);
 }
 
 async function send(msg){
   await ensureSession();
-  const apiKey = localStorage.getItem('fa_gemini_key') || '';
-  const model = localStorage.getItem('fa_gemini_model') || 'gemini-1.5-flash';
 
   addBubble('user', esc(msg));
   addBubble('assistant', `<span class="text-slate-500">正在生成…</span>`);
@@ -167,13 +194,17 @@ async function send(msg){
   const r = await fetch(`${API_BASE}/chat`, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({sessionId, message: msg, geminiApiKey: apiKey, model})
+    body: JSON.stringify({sessionId, message: msg})
   });
 
   messagesEl.lastElementChild?.remove();
 
   const d = await r.json();
-  if(!r.ok){ addBubble('assistant', `<span class="text-red-600">${esc(d.error||'请求失败')}</span>`); return; }
+  console.log('[UI] response', d);
+  if(!r.ok){
+    addBubble('assistant', `<span class="text-red-600">${esc(d.error||'请求失败')}</span>`);
+    return;
+  }
   renderAssistant(d);
 }
 
@@ -186,7 +217,10 @@ $('#form').addEventListener('submit', e=>{
 });
 
 document.querySelectorAll('.demo').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ inputEl.value = btn.dataset.q; inputEl.focus(); });
+  btn.addEventListener('click', ()=>{
+    inputEl.value = btn.dataset.q;
+    inputEl.focus();
+  });
 });
 
 $('#btnNew').addEventListener('click', async ()=>{
@@ -199,28 +233,20 @@ $('#btnNew').addEventListener('click', async ()=>{
 
 $('#btnExport').addEventListener('click', async ()=>{
   await ensureSession();
-  const url = `http://localhost:3000/api/report/${sessionId}`;
-  window.open(url, '_blank');
-  addBubble('assistant', '已打开投研报告页：在新页面按 Ctrl+P / ⌘P → 另存为 PDF。');
+  // 专业报告页面：浏览器中“打印”即可导出 PDF
+  window.open(`${API_BASE}/report/${sessionId}`, '_blank');
 });
 
-// settings
-const modal = $('#modal');
-$('#btnSettings').addEventListener('click', ()=>{
-  $('#apiKey').value = localStorage.getItem('fa_gemini_key') || '';
-  $('#model').value = localStorage.getItem('fa_gemini_model') || 'gemini-1.5-flash';
-  modal.classList.remove('hidden'); modal.classList.add('flex');
-});
-$('#btnClose').addEventListener('click', ()=>modal.classList.add('hidden'));
-$('#btnSave').addEventListener('click', ()=>{
-  localStorage.setItem('fa_gemini_key', $('#apiKey').value.trim());
-  localStorage.setItem('fa_gemini_model', $('#model').value);
-  modal.classList.add('hidden');
-  addBubble('assistant','设置已保存。');
+$('#btnHistory').addEventListener('click', async ()=>{
+  await ensureSession();
+  window.open(`${API_BASE}/history/${sessionId}`, '_blank');
 });
 
-addBubble('assistant','先点右上角【设置】填 Gemini Key，然后提问。完成一次回答后点【导出投研PDF】。');
-ensureSession();
+addBubble('assistant', `你好！我可以做：<br/>
+1) 年报证据问答（10-K/20-F）<br/>
+2) 财务趋势图表与公司对比<br/>
+3) 国内榜单与Top10图表<br/><br/>
+试试点击下面的示例按钮，或者直接提问。`);
 </script>
 </body>
 </html>

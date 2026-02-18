@@ -13,7 +13,7 @@ GLM返回异常: {"error":{"code":"401","message":"令牌已过期或验证不�
 1. GLM_KEY未配置或配置错误
 2. API Key已过期
 3. API Key格式不正确（可能包含多余空格）
-4. 前端传入的geminiApiKey无效
+4. 前端传入的API Key无效
 
 **解决方案**：
 
@@ -33,7 +33,7 @@ GLM_KEY="your_api_key_here"
 #### 方案2：检查前端设置
 1. 打开浏览器访问 http://localhost:5173
 2. 点击右上角【设置】
-3. 检查Gemini API Key是否正确填写
+3. 检查GLM API Key是否正确填写
 4. 确保API Key有效且未过期
 
 #### 方案3：获取新的API Key
