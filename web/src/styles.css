@@ -1,0 +1,44 @@
+html,
+body {
+  overflow-x: hidden;
+}
+
+#messages {
+  overflow-x: hidden;
+}
+
+.msg {
+  line-height: 1.55;
+  font-size: 14px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.msg pre,
+.msg code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg ul {
+  list-style: disc;
+  margin-left: 18px;
+}
+
+.msg ol {
+  list-style: decimal;
+  margin-left: 18px;
+}
+
+.msg li {
+  margin: 4px 0;
+}
+
+.msg a {
+  text-decoration: underline;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+}

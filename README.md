@@ -1,5 +1,5 @@
 # 财务分析智能助手（冠军版）
-Go + Express + SQLite + GLM  
+Go + GLM  
 能力：年报RAG（FTS5+Embedding重排）+ SEC财务时间序列 + 派生指标 + 多轮对话 + 引用溯源 + 投研报告导出（打印保存PDF）+ **A股支持**
 
 ## 核心功能
@@ -29,7 +29,6 @@ Go + Express + SQLite + GLM
 ## 环境
 - Node.js 18+
 - Go 1.22+
-- Python（用于启动静态网页服务，可用系统自带或安装）
 
 ## 启动（Windows）
 1) 启动 Go 服务
@@ -39,29 +38,15 @@ go mod tidy
 go run .
 ```
 
-2) 启动 Express
-```bash
-cd ../server
-npm i
-# 创建配置文件（参考 ENV_EXAMPLE.txt）
-# Windows: copy ENV_EXAMPLE.txt .env
-# Linux/Mac: cp ENV_EXAMPLE.txt .env
-# 然后编辑 .env 文件，填写以下配置：
-#   - GLM_KEY: 你的智谱GLM API Key
-#   - TUSHARE_TOKEN: 你的Tushare Token（可选，如果使用本地JSON文件则不需要）
-#   - TUSHARE_API_URL: Tushare API地址（默认使用官方，或使用自定义代理）
-#   - SEC_USER_AGENT: 你的邮箱/联系方式（必须设置）
-npm run start
-```
-
-3) 启动前端静态服务
+2) 启动 React 前端
 ```bash
 cd ../web
-python -m http.server 5173
+npm i
+npm run dev
 ```
 
 浏览器打开：http://localhost:5173
-右上角【设置】填写 GLM API Key
+API Key 可配置在 `server/.env`（Go 启动时会自动读取）或系统环境变量 `GLM_KEY`
 
 ## 数据文件配置
 

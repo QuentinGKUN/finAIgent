@@ -1,0 +1,2 @@
+import pptx 
+print('ok') 

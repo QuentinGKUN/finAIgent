@@ -1,0 +1,711 @@
+C:\tools\python\Lib\site-packages\requests\__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
+  warnings.warn(
+INFO:valuecell.server.config.i18n:Initialized i18n configuration: language=en, timezone=America/New_York
+INFO:valuecell.adapters.assets.manager:Asset adapter manager initialized
+INFO:valuecell.adapters.assets.manager:Watchlist manager initialized
+INFO:valuecell.adapters.assets.i18n_integration:Asset i18n service initialized
+2026-02-26 16:22:44.014 | INFO     | valuecell.server.services.agent_stream_service:_preload_agent_classes_once:34 - Preloading local agent classes...
+2026-02-26 16:22:44.016 | INFO     | valuecell.core.agent.connect:_load_remote_contexts:247 - Loading agent cards from C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\agent_cards
+2026-02-26 16:22:44.019 | INFO     | valuecell.core.agent.connect:_load_remote_contexts:280 - Loaded 4 agent card(s) from C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\agent_cards: ['GridStrategyAgent', 'ResearchAgent', 'NewsAgent', 'PromptBasedStrategyAgent']
+2026-02-26 16:22:44.019 | INFO     | valuecell.core.agent.connect:preload_local_agent_classes:317 - Preloading agent class for 'GridStrategyAgent' (spec='valuecell.agents.grid_agent.grid_agent:GridStrategyAgent')
+2026-02-26 16:22:44.019 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:96 - _resolve_local_agent_class_sync: importing module 'valuecell.agents.grid_agent.grid_agent' for class 'GridStrategyAgent'
+2026-02-26 16:22:47.790 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:102 - _resolve_local_agent_class_sync: module imported, getting class
+2026-02-26 16:22:47.790 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:104 - _resolve_local_agent_class_sync: class 'GridStrategyAgent' resolved
+2026-02-26 16:22:47.790 | INFO     | valuecell.core.agent.connect:preload_local_agent_classes:332 - Successfully preloaded class 'GridStrategyAgent' for 'GridStrategyAgent'
+2026-02-26 16:22:47.790 | DEBUG    | valuecell.core.agent.connect:preload_local_agent_classes:307 - Skipping preload for 'ResearchAgent': not in provided names list
+2026-02-26 16:22:47.790 | DEBUG    | valuecell.core.agent.connect:preload_local_agent_classes:307 - Skipping preload for 'NewsAgent': not in provided names list
+2026-02-26 16:22:47.791 | INFO     | valuecell.core.agent.connect:preload_local_agent_classes:317 - Preloading agent class for 'PromptBasedStrategyAgent' (spec='valuecell.agents.prompt_strategy_agent.core:PromptBasedStrategyAgent')
+2026-02-26 16:22:47.791 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:96 - _resolve_local_agent_class_sync: importing module 'valuecell.agents.prompt_strategy_agent.core' for class 'PromptBasedStrategyAgent'
+2026-02-26 16:22:47.795 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:102 - _resolve_local_agent_class_sync: module imported, getting class
+2026-02-26 16:22:47.795 | INFO     | valuecell.core.agent.connect:_resolve_local_agent_class_sync:104 - _resolve_local_agent_class_sync: class 'PromptBasedStrategyAgent' resolved
+2026-02-26 16:22:47.795 | INFO     | valuecell.core.agent.connect:preload_local_agent_classes:332 - Successfully preloaded class 'PromptBasedStrategyAgent' for 'PromptBasedStrategyAgent'
+2026-02-26 16:22:47.795 | INFO     | valuecell.core.agent.connect:preload_local_agent_classes:337 - Preload complete: 2/4 agent classes loaded
+2026-02-26 16:22:47.795 | INFO     | valuecell.server.services.agent_stream_service:_preload_agent_classes_once:39 - ✓ Local agent classes preloaded
+2026-02-26 16:22:47.796 | INFO     | valuecell.server.services.agent_stream_service:__init__:54 - Agent stream service initialized
+2026-02-26 16:22:48.114 | INFO     | valuecell.server.services.agent_stream_service:__init__:54 - Agent stream service initialized
+2026-02-26 16:22:48.236 | INFO     | __main__:main:75 - ENV=local_dev detected: skipping stdin control thread (IDE debug mode)
+INFO:     Started server process [584]
+INFO:     Waiting for application startup.
+2026-02-26 16:22:48.365 | INFO     | valuecell.server.api.app:lifespan:94 - ValueCell Server starting up on 127.0.0.1:8010...
+2026-02-26 16:22:48.365 | INFO     | valuecell.server.api.app:lifespan:100 - Initializing database tables...
+2026-02-26 16:22:48.415 | INFO     | valuecell.server.db.init_db:initialize:623 - Starting database initialization...
+2026-02-26 16:22:48.422 | INFO     | valuecell.server.db.init_db:check_tables_exist:87 - All tables exist: ['agents', 'assets', 'conversation_items', 'conversations', 'strategies', 'strategy_compose_cycles', 'strategy_details', 'strategy_holdings', 'strategy_instructions', 'strategy_portfolio_views', 'strategy_prompts', 'tasks', 'user_profiles', 'watchlist_items', 'watchlists']
+2026-02-26 16:22:48.422 | INFO     | valuecell.server.db.init_db:initialize:627 - Database already exists and is properly initialized
+2026-02-26 16:22:48.422 | INFO     | valuecell.server.api.app:lifespan:103 - ✓ Database initialized
+2026-02-26 16:22:48.422 | INFO     | valuecell.server.api.app:lifespan:111 - Configuring data adapters...
+INFO:valuecell.adapters.assets.yfinance_adapter:Yahoo Finance adapter initialized
+INFO:valuecell.adapters.assets.manager:Registered adapter: yfinance
+2026-02-26 16:22:48.423 | INFO     | valuecell.server.api.app:lifespan:117 - ✓ Yahoo Finance adapter configured
+INFO:valuecell.adapters.assets.akshare_adapter:AKShare adapter initialized with caching and field mapping
+INFO:valuecell.adapters.assets.manager:Registered adapter: akshare
+2026-02-26 16:22:48.424 | INFO     | valuecell.server.api.app:lifespan:124 - ✓ AKShare adapter configured (optimized)
+INFO:valuecell.adapters.assets.manager:Registered adapter: baostock
+2026-02-26 16:22:48.506 | INFO     | valuecell.server.api.app:lifespan:136 - Data adapters configuration completed
+2026-02-26 16:22:48.519 | INFO     | valuecell.server.services.agent_stream_service:_auto_resume_recurring_tasks:118 - Task auto-resume: no recurring running tasks found
+2026-02-26 16:22:48.556 | INFO     | valuecell.server.services.strategy_autoresume:auto_resume_strategies:68 - Auto-resume: no eligible strategies found
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8010 (Press CTRL+C to quit)
+✓ BaoStock adapter configured
+Data adapters configuration completed
+INFO:     127.0.0.1:60497 - "POST /api/v1/agents/stream HTTP/1.1" 200 OK
+2026-02-26 16:27:12.426 | INFO     | valuecell.server.services.agent_stream_service:stream_query_agent:74 - Processing streaming query: 请围绕以下公司进行深度分析，并优先输出可核验的数据来源与结论：腾讯控股
+用户问题：分析一下腾讯的未来发展...
+2026-02-26 16:27:12.426 | INFO     | valuecell.core.coordinate.orchestrator:process_user_input:124 - process_user_input: starting background session for conversation fa-120b045d4c1f472db7a787ea36a2a676
+2026-02-26 16:27:12.441 | INFO     | valuecell.core.coordinate.orchestrator:_generate_responses:209 - _generate_responses: handling new request for conversation fa-120b045d4c1f472db7a787ea36a2a676
+2026-02-26 16:27:12.466 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:384 - _handle_new_request: starting planner for conversation fa-120b045d4c1f472db7a787ea36a2a676, thread th-dd408fc1a6aa44199544813201a59cc6
+2026-02-26 16:27:12.467 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:393 - _handle_new_request: planner task started for conversation fa-120b045d4c1f472db7a787ea36a2a676
+2026-02-26 16:27:12.467 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:452 - _monitor_planning_task: monitoring planning task for conversation fa-120b045d4c1f472db7a787ea36a2a676
+2026-02-26 16:27:12.467 | DEBUG    | valuecell.config.loader:__init__:63 - ConfigLoader initialized: config_dir=C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs, env=development
+2026-02-26 16:27:12.467 | INFO     | valuecell.config.loader:load_config:232 - Loading config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\config.yaml
+2026-02-26 16:27:12.473 | INFO     | valuecell.config.loader:load_agent_config:315 - Loading agent config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\agents\super_agent.yaml
+2026-02-26 16:27:12.479 | DEBUG    | valuecell.config.loader:load_agent_config:329 - Agent config loaded: super_agent
+2026-02-26 16:27:12.480 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\azure.yaml
+2026-02-26 16:27:12.490 | DEBUG    | valuecell.config.loader:_apply_env_overrides:169 - Applied env override: AZURE_OPENAI_API_VERSION=2024-10-21 -> api_version
+2026-02-26 16:27:12.491 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\dashscope.yaml
+2026-02-26 16:27:12.497 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\deepseek.yaml
+2026-02-26 16:27:12.503 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\google.yaml
+2026-02-26 16:27:12.510 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\ollama.yaml
+2026-02-26 16:27:12.513 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\openai-compatible.yaml
+2026-02-26 16:27:12.521 | DEBUG    | valuecell.config.loader:replacer:89 - Resolved ${OPENAI_COMPATIBLE_BASE_URL} -> 
+2026-02-26 16:27:12.521 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\openai.yaml
+2026-02-26 16:27:12.526 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\openrouter.yaml
+2026-02-26 16:27:12.531 | INFO     | valuecell.config.loader:load_provider_config:273 - Loading provider config: C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\configs\providers\siliconflow.yaml
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 16:27:12.538 | INFO     | valuecell.adapters.models.factory:create_model_for_agent:833 - Creating model for agent 'super_agent': model_id=qwen3:4b, provider=ollama
+2026-02-26 16:27:12.545 | WARNING  | valuecell.adapters.models.factory:create_model:684 - Failed to create model with provider ollama: agno package not installed, install with: pip install agno
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 16:27:12.548 | ERROR    | valuecell.utils.model:get_model_for_agent:236 - Failed to create model for agent 'super_agent': Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 16:27:12.548 | ERROR    | valuecell.core.plan.planner:_get_or_init_agent:128 - Failed to initialize planner agent: %s
+Traceback (most recent call last):
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 17, in <module>
+    from ollama import AsyncClient as AsyncOllamaClient
+
+ModuleNotFoundError: No module named 'ollama'
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 573, in create_model
+    from agno.models.ollama import Ollama
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\__init__.py", line 1, in <module>
+    from agno.models.ollama.chat import Ollama
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 22, in <module>
+    raise ImportError("`ollama` not installed. Please install using `pip install ollama`")
+
+ImportError: `ollama` not installed. Please install using `pip install ollama`
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 682, in create_model
+    return self._create_model_internal(model_id, provider, **kwargs)
+           │    │                      │         │           └ {}
+           │    │                      │         └ 'ollama'
+           │    │                      └ 'qwen3:4b'
+           │    └ <function ModelFactory._create_model_internal at 0x0000020FF89B0400>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 791, in _create_model_internal
+    return provider_instance.create_model(model_id, **kwargs)
+           │                 │            │           └ {}
+           │                 │            └ 'qwen3:4b'
+           │                 └ <function OllamaProvider.create_model at 0x0000020FF89B00E0>
+           └ <valuecell.adapters.models.factory.OllamaProvider object at 0x0000020FFF4A4290>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 575, in create_model
+    raise ImportError(
+
+ImportError: agno package not installed, install with: pip install agno
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 98, in <module>
+    main()
+    └ <function main at 0x0000020FFF2A0FE0>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 89, in main
+    server.run()
+    │      └ <function Server.run at 0x0000020FC8A61E40>
+    └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+
+  File "C:\tools\python\Lib\site-packages\uvicorn\server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000020FC8A0C040>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000020FFBE57C10>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           │           │    │             └ None
+           │           │    └ <function Server.serve at 0x0000020FC8A61EE0>
+           │           └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           └ <function asyncio_run at 0x0000020FC89D09A0>
+  File "C:\tools\python\Lib\site-packages\uvicorn\_compat.py", line 30, in asyncio_run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x0000020FFF2BC220>
+           │      └ <function Runner.run at 0x0000020FC87ED440>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at C:\tools\python\Lib\site-packages\uvicorn\server.py:79> wait_for=...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x0000020FC87E3060>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000020FC8850180>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x0000020FC87ECE00>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000020FC8365D00>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF439A20>()>
+  File "C:\tools\python\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x0000020FFF439A20>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x0000020FFF439A20>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF439A20>()>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 165, in create_plan
+    tasks, guidance_message = await self._analyze_input_and_create_tasks(
+                                    │    └ <function ExecutionPlanner._analyze_input_and_create_tasks at 0x0000020FFA630680>
+                                    └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 201, in _analyze_input_and_create_tasks
+    agent = self._get_or_init_agent()
+            │    └ <function ExecutionPlanner._get_or_init_agent at 0x0000020FFA630540>
+            └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+> File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 102, in _get_or_init_agent
+    model = model_utils_mod.get_model_for_agent("super_agent")
+            │               └ <function get_model_for_agent at 0x0000020FF890C5E0>
+            └ <module 'valuecell.utils.model' from 'C:\\Users\\23726\\fin-assistant-champion2.0\\fin-assistant-champion\\_tmp_valuecell\\py...
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\utils\model.py", line 234, in get_model_for_agent
+    return create_model_for_agent(agent_name, **kwargs)
+           │                      │             └ {}
+           │                      └ 'super_agent'
+           └ <function create_model_for_agent at 0x0000020FF89B0A40>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 1262, in create_model_for_agent
+    return factory.create_model_for_agent(agent_name, **kwargs)
+           │       │                      │             └ {}
+           │       │                      └ 'super_agent'
+           │       └ <function ModelFactory.create_model_for_agent at 0x0000020FF89B04A0>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 871, in create_model_for_agent
+    return self.create_model(
+           │    └ <function ModelFactory.create_model at 0x0000020FF89B0360>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 726, in create_model
+    raise ValueError(
+
+ValueError: Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 16:27:12.680 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:482 - _monitor_planning_task: planning completed for conversation fa-120b045d4c1f472db7a787ea36a2a676; executing plan
+INFO:     127.0.0.1:60616 - "POST /api/v1/agents/stream HTTP/1.1" 200 OK
+2026-02-26 17:13:54.142 | INFO     | valuecell.server.services.agent_stream_service:stream_query_agent:74 - Processing streaming query: 请围绕以下公司进行深度分析，并优先输出可核验的数据来源与结论：腾讯控股
+用户问题：分析一下腾讯的未来发展...
+2026-02-26 17:13:54.143 | INFO     | valuecell.core.coordinate.orchestrator:process_user_input:124 - process_user_input: starting background session for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25
+2026-02-26 17:13:54.167 | INFO     | valuecell.core.coordinate.orchestrator:_generate_responses:209 - _generate_responses: handling new request for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25
+2026-02-26 17:13:54.187 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:384 - _handle_new_request: starting planner for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25, thread th-7ec7aa5f808441e1a381cb68f0044440
+2026-02-26 17:13:54.188 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:393 - _handle_new_request: planner task started for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25
+2026-02-26 17:13:54.188 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:452 - _monitor_planning_task: monitoring planning task for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:13:54.192 | INFO     | valuecell.adapters.models.factory:create_model_for_agent:833 - Creating model for agent 'super_agent': model_id=qwen3:4b, provider=ollama
+2026-02-26 17:13:54.198 | WARNING  | valuecell.adapters.models.factory:create_model:684 - Failed to create model with provider ollama: agno package not installed, install with: pip install agno
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:13:54.198 | ERROR    | valuecell.utils.model:get_model_for_agent:236 - Failed to create model for agent 'super_agent': Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:13:54.199 | ERROR    | valuecell.core.plan.planner:_get_or_init_agent:128 - Failed to initialize planner agent: %s
+Traceback (most recent call last):
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 17, in <module>
+    from ollama import AsyncClient as AsyncOllamaClient
+
+ModuleNotFoundError: No module named 'ollama'
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 573, in create_model
+    from agno.models.ollama import Ollama
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\__init__.py", line 1, in <module>
+    from agno.models.ollama.chat import Ollama
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 22, in <module>
+    raise ImportError("`ollama` not installed. Please install using `pip install ollama`")
+
+ImportError: `ollama` not installed. Please install using `pip install ollama`
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 682, in create_model
+    return self._create_model_internal(model_id, provider, **kwargs)
+           │    │                      │         │           └ {}
+           │    │                      │         └ 'ollama'
+           │    │                      └ 'qwen3:4b'
+           │    └ <function ModelFactory._create_model_internal at 0x0000020FF89B0400>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 791, in _create_model_internal
+    return provider_instance.create_model(model_id, **kwargs)
+           │                 │            │           └ {}
+           │                 │            └ 'qwen3:4b'
+           │                 └ <function OllamaProvider.create_model at 0x0000020FF89B00E0>
+           └ <valuecell.adapters.models.factory.OllamaProvider object at 0x0000020FFF551150>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 575, in create_model
+    raise ImportError(
+
+ImportError: agno package not installed, install with: pip install agno
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 98, in <module>
+    main()
+    └ <function main at 0x0000020FFF2A0FE0>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 89, in main
+    server.run()
+    │      └ <function Server.run at 0x0000020FC8A61E40>
+    └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+
+  File "C:\tools\python\Lib\site-packages\uvicorn\server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000020FC8A0C040>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000020FFBE57C10>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           │           │    │             └ None
+           │           │    └ <function Server.serve at 0x0000020FC8A61EE0>
+           │           └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           └ <function asyncio_run at 0x0000020FC89D09A0>
+  File "C:\tools\python\Lib\site-packages\uvicorn\_compat.py", line 30, in asyncio_run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x0000020FFF2BC220>
+           │      └ <function Runner.run at 0x0000020FC87ED440>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at C:\tools\python\Lib\site-packages\uvicorn\server.py:79> wait_for=...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x0000020FC87E3060>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000020FC8850180>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x0000020FC87ECE00>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000020FC8365D00>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF489450>()>
+  File "C:\tools\python\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x0000020FFF489450>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x0000020FFF489450>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF489450>()>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 165, in create_plan
+    tasks, guidance_message = await self._analyze_input_and_create_tasks(
+                                    │    └ <function ExecutionPlanner._analyze_input_and_create_tasks at 0x0000020FFA630680>
+                                    └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 201, in _analyze_input_and_create_tasks
+    agent = self._get_or_init_agent()
+            │    └ <function ExecutionPlanner._get_or_init_agent at 0x0000020FFA630540>
+            └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+> File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 102, in _get_or_init_agent
+    model = model_utils_mod.get_model_for_agent("super_agent")
+            │               └ <function get_model_for_agent at 0x0000020FF890C5E0>
+            └ <module 'valuecell.utils.model' from 'C:\\Users\\23726\\fin-assistant-champion2.0\\fin-assistant-champion\\_tmp_valuecell\\py...
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\utils\model.py", line 234, in get_model_for_agent
+    return create_model_for_agent(agent_name, **kwargs)
+           │                      │             └ {}
+           │                      └ 'super_agent'
+           └ <function create_model_for_agent at 0x0000020FF89B0A40>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 1262, in create_model_for_agent
+    return factory.create_model_for_agent(agent_name, **kwargs)
+           │       │                      │             └ {}
+           │       │                      └ 'super_agent'
+           │       └ <function ModelFactory.create_model_for_agent at 0x0000020FF89B04A0>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 871, in create_model_for_agent
+    return self.create_model(
+           │    └ <function ModelFactory.create_model at 0x0000020FF89B0360>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 726, in create_model
+    raise ValueError(
+
+ValueError: Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:13:54.298 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:482 - _monitor_planning_task: planning completed for conversation fa-c0e769ca7e2d4075adcc1c24e1db7e25; executing plan
+INFO:     127.0.0.1:53756 - "POST /api/v1/agents/stream HTTP/1.1" 200 OK
+2026-02-26 17:29:36.334 | INFO     | valuecell.server.services.agent_stream_service:stream_query_agent:74 - Processing streaming query: test...
+2026-02-26 17:29:36.334 | INFO     | valuecell.core.coordinate.orchestrator:process_user_input:124 - process_user_input: starting background session for conversation fa-aae727468ee8491b9a51b445798435ce
+2026-02-26 17:29:36.378 | INFO     | valuecell.core.coordinate.orchestrator:_generate_responses:209 - _generate_responses: handling new request for conversation fa-aae727468ee8491b9a51b445798435ce
+2026-02-26 17:29:36.389 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:384 - _handle_new_request: starting planner for conversation fa-aae727468ee8491b9a51b445798435ce, thread th-f0077409610d45f88da0cef3f096c335
+2026-02-26 17:29:36.389 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:393 - _handle_new_request: planner task started for conversation fa-aae727468ee8491b9a51b445798435ce
+2026-02-26 17:29:36.389 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:452 - _monitor_planning_task: monitoring planning task for conversation fa-aae727468ee8491b9a51b445798435ce
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:29:36.390 | INFO     | valuecell.adapters.models.factory:create_model_for_agent:833 - Creating model for agent 'super_agent': model_id=qwen3:4b, provider=ollama
+2026-02-26 17:29:36.393 | WARNING  | valuecell.adapters.models.factory:create_model:684 - Failed to create model with provider ollama: agno package not installed, install with: pip install agno
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:29:36.393 | ERROR    | valuecell.utils.model:get_model_for_agent:236 - Failed to create model for agent 'super_agent': Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:29:36.393 | ERROR    | valuecell.core.plan.planner:_get_or_init_agent:128 - Failed to initialize planner agent: %s
+Traceback (most recent call last):
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 17, in <module>
+    from ollama import AsyncClient as AsyncOllamaClient
+
+ModuleNotFoundError: No module named 'ollama'
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 573, in create_model
+    from agno.models.ollama import Ollama
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\__init__.py", line 1, in <module>
+    from agno.models.ollama.chat import Ollama
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 22, in <module>
+    raise ImportError("`ollama` not installed. Please install using `pip install ollama`")
+
+ImportError: `ollama` not installed. Please install using `pip install ollama`
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 682, in create_model
+    return self._create_model_internal(model_id, provider, **kwargs)
+           │    │                      │         │           └ {}
+           │    │                      │         └ 'ollama'
+           │    │                      └ 'qwen3:4b'
+           │    └ <function ModelFactory._create_model_internal at 0x0000020FF89B0400>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 791, in _create_model_internal
+    return provider_instance.create_model(model_id, **kwargs)
+           │                 │            │           └ {}
+           │                 │            └ 'qwen3:4b'
+           │                 └ <function OllamaProvider.create_model at 0x0000020FF89B00E0>
+           └ <valuecell.adapters.models.factory.OllamaProvider object at 0x0000020FFF550FD0>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 575, in create_model
+    raise ImportError(
+
+ImportError: agno package not installed, install with: pip install agno
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 98, in <module>
+    main()
+    └ <function main at 0x0000020FFF2A0FE0>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 89, in main
+    server.run()
+    │      └ <function Server.run at 0x0000020FC8A61E40>
+    └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+
+  File "C:\tools\python\Lib\site-packages\uvicorn\server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000020FC8A0C040>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000020FFBE57C10>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           │           │    │             └ None
+           │           │    └ <function Server.serve at 0x0000020FC8A61EE0>
+           │           └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           └ <function asyncio_run at 0x0000020FC89D09A0>
+  File "C:\tools\python\Lib\site-packages\uvicorn\_compat.py", line 30, in asyncio_run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x0000020FFF2BC220>
+           │      └ <function Runner.run at 0x0000020FC87ED440>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at C:\tools\python\Lib\site-packages\uvicorn\server.py:79> wait_for=...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x0000020FC87E3060>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000020FC8850180>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x0000020FC87ECE00>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000020FC8365D00>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48AE30>()>
+  File "C:\tools\python\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48AE30>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48AE30>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48AE30>()>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 165, in create_plan
+    tasks, guidance_message = await self._analyze_input_and_create_tasks(
+                                    │    └ <function ExecutionPlanner._analyze_input_and_create_tasks at 0x0000020FFA630680>
+                                    └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 201, in _analyze_input_and_create_tasks
+    agent = self._get_or_init_agent()
+            │    └ <function ExecutionPlanner._get_or_init_agent at 0x0000020FFA630540>
+            └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+> File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 102, in _get_or_init_agent
+    model = model_utils_mod.get_model_for_agent("super_agent")
+            │               └ <function get_model_for_agent at 0x0000020FF890C5E0>
+            └ <module 'valuecell.utils.model' from 'C:\\Users\\23726\\fin-assistant-champion2.0\\fin-assistant-champion\\_tmp_valuecell\\py...
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\utils\model.py", line 234, in get_model_for_agent
+    return create_model_for_agent(agent_name, **kwargs)
+           │                      │             └ {}
+           │                      └ 'super_agent'
+           └ <function create_model_for_agent at 0x0000020FF89B0A40>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 1262, in create_model_for_agent
+    return factory.create_model_for_agent(agent_name, **kwargs)
+           │       │                      │             └ {}
+           │       │                      └ 'super_agent'
+           │       └ <function ModelFactory.create_model_for_agent at 0x0000020FF89B04A0>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 871, in create_model_for_agent
+    return self.create_model(
+           │    └ <function ModelFactory.create_model at 0x0000020FF89B0360>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 726, in create_model
+    raise ValueError(
+
+ValueError: Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:29:36.491 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:482 - _monitor_planning_task: planning completed for conversation fa-aae727468ee8491b9a51b445798435ce; executing plan
+INFO:     127.0.0.1:62333 - "POST /api/v1/agents/stream HTTP/1.1" 200 OK
+2026-02-26 17:33:49.772 | INFO     | valuecell.server.services.agent_stream_service:stream_query_agent:74 - Processing streaming query: test...
+2026-02-26 17:33:49.773 | INFO     | valuecell.core.coordinate.orchestrator:process_user_input:124 - process_user_input: starting background session for conversation fa-194eac68c15543fa87a9d699a8dd9fd3
+2026-02-26 17:33:49.788 | INFO     | valuecell.core.coordinate.orchestrator:_generate_responses:209 - _generate_responses: handling new request for conversation fa-194eac68c15543fa87a9d699a8dd9fd3
+2026-02-26 17:33:49.813 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:384 - _handle_new_request: starting planner for conversation fa-194eac68c15543fa87a9d699a8dd9fd3, thread th-0e60b84cff8b4dc39c68a82ed84e3dfe
+2026-02-26 17:33:49.814 | INFO     | valuecell.core.coordinate.orchestrator:_handle_new_request:393 - _handle_new_request: planner task started for conversation fa-194eac68c15543fa87a9d699a8dd9fd3
+2026-02-26 17:33:49.814 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:452 - _monitor_planning_task: monitoring planning task for conversation fa-194eac68c15543fa87a9d699a8dd9fd3
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:33:49.816 | INFO     | valuecell.adapters.models.factory:create_model_for_agent:833 - Creating model for agent 'super_agent': model_id=qwen3:4b, provider=ollama
+2026-02-26 17:33:49.819 | WARNING  | valuecell.adapters.models.factory:create_model:684 - Failed to create model with provider ollama: agno package not installed, install with: pip install agno
+INFO:valuecell.config.manager:Auto-selected provider: ollama (API key detected, available providers: ['ollama'])
+2026-02-26 17:33:49.821 | ERROR    | valuecell.utils.model:get_model_for_agent:236 - Failed to create model for agent 'super_agent': Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:33:49.821 | ERROR    | valuecell.core.plan.planner:_get_or_init_agent:128 - Failed to initialize planner agent: %s
+Traceback (most recent call last):
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 17, in <module>
+    from ollama import AsyncClient as AsyncOllamaClient
+
+ModuleNotFoundError: No module named 'ollama'
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 573, in create_model
+    from agno.models.ollama import Ollama
+
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\__init__.py", line 1, in <module>
+    from agno.models.ollama.chat import Ollama
+  File "C:\tools\python\Lib\site-packages\agno\models\ollama\chat.py", line 22, in <module>
+    raise ImportError("`ollama` not installed. Please install using `pip install ollama`")
+
+ImportError: `ollama` not installed. Please install using `pip install ollama`
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 682, in create_model
+    return self._create_model_internal(model_id, provider, **kwargs)
+           │    │                      │         │           └ {}
+           │    │                      │         └ 'ollama'
+           │    │                      └ 'qwen3:4b'
+           │    └ <function ModelFactory._create_model_internal at 0x0000020FF89B0400>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 791, in _create_model_internal
+    return provider_instance.create_model(model_id, **kwargs)
+           │                 │            │           └ {}
+           │                 │            └ 'qwen3:4b'
+           │                 └ <function OllamaProvider.create_model at 0x0000020FF89B00E0>
+           └ <valuecell.adapters.models.factory.OllamaProvider object at 0x0000020FFF4B2490>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 575, in create_model
+    raise ImportError(
+
+ImportError: agno package not installed, install with: pip install agno
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 98, in <module>
+    main()
+    └ <function main at 0x0000020FFF2A0FE0>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\server\main.py", line 89, in main
+    server.run()
+    │      └ <function Server.run at 0x0000020FC8A61E40>
+    └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+
+  File "C:\tools\python\Lib\site-packages\uvicorn\server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000020FC8A0C040>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000020FFBE57C10>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           │           │    │             └ None
+           │           │    └ <function Server.serve at 0x0000020FC8A61EE0>
+           │           └ <uvicorn.server.Server object at 0x0000020FFF1449D0>
+           └ <function asyncio_run at 0x0000020FC89D09A0>
+  File "C:\tools\python\Lib\site-packages\uvicorn\_compat.py", line 30, in asyncio_run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x0000020FFF2BC220>
+           │      └ <function Runner.run at 0x0000020FC87ED440>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at C:\tools\python\Lib\site-packages\uvicorn\server.py:79> wait_for=...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x0000020FC87E3060>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000020FFF1783D0>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000020FC8850180>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x0000020FC87ECE00>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\tools\python\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000020FC8365D00>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48ADD0>()>
+  File "C:\tools\python\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48ADD0>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48ADD0>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x0000020FFF48ADD0>()>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 165, in create_plan
+    tasks, guidance_message = await self._analyze_input_and_create_tasks(
+                                    │    └ <function ExecutionPlanner._analyze_input_and_create_tasks at 0x0000020FFA630680>
+                                    └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 201, in _analyze_input_and_create_tasks
+    agent = self._get_or_init_agent()
+            │    └ <function ExecutionPlanner._get_or_init_agent at 0x0000020FFA630540>
+            └ <valuecell.core.plan.planner.ExecutionPlanner object at 0x0000020FFF1FAF10>
+
+> File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\core\plan\planner.py", line 102, in _get_or_init_agent
+    model = model_utils_mod.get_model_for_agent("super_agent")
+            │               └ <function get_model_for_agent at 0x0000020FF890C5E0>
+            └ <module 'valuecell.utils.model' from 'C:\\Users\\23726\\fin-assistant-champion2.0\\fin-assistant-champion\\_tmp_valuecell\\py...
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\utils\model.py", line 234, in get_model_for_agent
+    return create_model_for_agent(agent_name, **kwargs)
+           │                      │             └ {}
+           │                      └ 'super_agent'
+           └ <function create_model_for_agent at 0x0000020FF89B0A40>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 1262, in create_model_for_agent
+    return factory.create_model_for_agent(agent_name, **kwargs)
+           │       │                      │             └ {}
+           │       │                      └ 'super_agent'
+           │       └ <function ModelFactory.create_model_for_agent at 0x0000020FF89B04A0>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 871, in create_model_for_agent
+    return self.create_model(
+           │    └ <function ModelFactory.create_model at 0x0000020FF89B0360>
+           └ <valuecell.adapters.models.factory.ModelFactory object at 0x0000020FFF443450>
+
+  File "C:\Users\23726\fin-assistant-champion2.0\fin-assistant-champion\_tmp_valuecell\python\valuecell\adapters\models\factory.py", line 726, in create_model
+    raise ValueError(
+
+ValueError: Failed to create model. Primary provider (ollama) and all fallback providers failed. Original error: agno package not installed, install with: pip install agno
+2026-02-26 17:33:49.926 | INFO     | valuecell.core.coordinate.orchestrator:_monitor_planning_task:482 - _monitor_planning_task: planning completed for conversation fa-194eac68c15543fa87a9d699a8dd9fd3; executing plan
+INFO:     127.0.0.1:58142 - "GET /api/v1/healthz HTTP/1.1" 200 OK

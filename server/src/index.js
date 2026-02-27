@@ -561,7 +561,7 @@ app.get('/api/report/:sessionId', (req,res)=>{
           }
         }
       });
-      document.getElementById('chartNote').innerText = `横轴：${chartData.xLabel||'年度'}；纵轴：${chartData.yLabel||'数值'}`;
+      document.getElementById('chartNote').innerText =  '横轴：' + (chartData.xLabel||'年度') + '；纵轴：' + (chartData.yLabel||'数值');
     }
   </script>
 </body>
