@@ -1,6 +1,8 @@
 html,
 body {
   overflow-x: hidden;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 #messages {
@@ -41,4 +43,23 @@ body {
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
+}
+
+.hotspot-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.hotspot-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hotspot-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+
+.hotspot-scroll::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 999px;
 }

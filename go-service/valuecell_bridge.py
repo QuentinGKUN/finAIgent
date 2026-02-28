@@ -5,6 +5,9 @@ import os
 import re
 import sys
 import uuid
+import warnings
+
+warnings.filterwarnings("ignore", message=".*doesn't match a supported version.*")
 
 import requests
 
@@ -289,7 +292,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--query", required=True)
     parser.add_argument("--companies", default="")
-    parser.add_argument("--api-url", default=os.getenv("VALUECELL_API_URL", "http://127.0.0.1:8000/api/v1"))
+    parser.add_argument("--api-url", default=os.getenv("VALUECELL_API_URL", "http://127.0.0.1:8010/api/v1"))
     parser.add_argument("--agent-name", default=os.getenv("VALUECELL_AGENT_NAME", ""))
     parser.add_argument("--conversation-id", default="")
     parser.add_argument("--timeout", type=float, default=float(os.getenv("VALUECELL_TIMEOUT_SEC", "180")))

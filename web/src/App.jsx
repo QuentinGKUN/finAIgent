@@ -87,6 +87,13 @@ function formatElapsed(ms = 0) {
   return `${min}m ${sec}s`;
 }
 
+function formatHotspotUpdatedAt(raw = "") {
+  if (!raw) return "";
+  const t = new Date(raw);
+  if (Number.isNaN(t.getTime())) return "";
+  return t.toLocaleTimeString("zh-CN", { hour12: false });
+}
+
 function buildProgressHtml(progress = {}, localElapsedMs = 0) {
   const detail = esc(progress.detail || "正在处理中...");
   const stage = esc(progressStageLabel(progress.stage || ""));
@@ -94,7 +101,12 @@ function buildProgressHtml(progress = {}, localElapsedMs = 0) {
   const pct = Number.isFinite(raw)
     ? Math.max(0, Math.min(100, Math.round(raw)))
     : stageProgressPercent(progress.stage || "");
-  const elapsedMs = Number(progress.elapsedMs) > 0 ? Number(progress.elapsedMs) : Number(localElapsedMs || 0);
+  const serverElapsedMs = Number(progress.elapsedMs);
+  const clientElapsedMs = Number(localElapsedMs || 0);
+  const elapsedMs = Math.max(
+    Number.isFinite(serverElapsedMs) ? serverElapsedMs : 0,
+    Number.isFinite(clientElapsedMs) ? clientElapsedMs : 0
+  );
   const elapsed = esc(formatElapsed(elapsedMs));
   return `
     <div class="text-slate-600">${detail}</div>
@@ -302,6 +314,11 @@ export default function App() {
   const [analysisMode, setAnalysisMode] = useState("normal");
   const [chartPayload, setChartPayload] = useState(null);
   const [chartNote, setChartNote] = useState("暂无图表");
+  const [hotspots, setHotspots] = useState([]);
+  const [hotspotsLoading, setHotspotsLoading] = useState(false);
+  const [hotspotsError, setHotspotsError] = useState("");
+  const [hotspotsUpdatedAt, setHotspotsUpdatedAt] = useState("");
+  const [hotspotsTraceUrl, setHotspotsTraceUrl] = useState("");
 
   const messagesRef = useRef(null);
   const chartCanvasRef = useRef(null);
@@ -376,6 +393,33 @@ export default function App() {
     };
   }, [chartPayload]);
 
+  const loadHotspots = async () => {
+    setHotspotsLoading(true);
+    setHotspotsError("");
+    try {
+      const r = await fetch(`${API_BASE}/market/hotspots?limit=8`);
+      const data = await r.json();
+      if (!r.ok) {
+        throw new Error(data.error || "市场热点拉取失败");
+      }
+      const items = Array.isArray(data.items) ? data.items : [];
+      setHotspots(items);
+      setHotspotsUpdatedAt(data.updatedAt || "");
+      setHotspotsTraceUrl(normalizeCitationUrl(data.traceUrl || ""));
+    } catch (err) {
+      setHotspots([]);
+      setHotspotsError(err?.message || "市场热点拉取失败");
+    } finally {
+      setHotspotsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (analysisMode === "deep") {
+      void loadHotspots();
+    }
+  }, [analysisMode]);
+
   const updateSession = (next) => {
     sessionRef.current = next;
     setSessionId(next);
@@ -434,16 +478,31 @@ export default function App() {
     let sid = "";
     let pollingStopped = false;
     let pollingTimer = null;
+    let elapsedTimer = null;
+    let latestStatus = { detail: "正在准备请求...", stage: "received" };
+    const renderProgress = () => {
+      if (pollingStopped) return;
+      updateMessage(loadingId, buildProgressHtml(latestStatus, Date.now() - startedAt));
+    };
+    const stopProgressTimers = () => {
+      pollingStopped = true;
+      if (pollingTimer) window.clearInterval(pollingTimer);
+      if (elapsedTimer) window.clearInterval(elapsedTimer);
+    };
     try {
+      elapsedTimer = window.setInterval(() => {
+        renderProgress();
+      }, 250);
       sid = await ensureSession();
       const pollStatus = async () => {
         try {
           const sr = await fetch(`${API_BASE}/chat/status/${sid}`);
           if (!sr.ok) return;
           const status = await sr.json();
-          if (!pollingStopped) {
-            updateMessage(loadingId, buildProgressHtml(status || {}, Date.now() - startedAt));
+          if (status && typeof status === "object") {
+            latestStatus = status;
           }
+          renderProgress();
         } catch (_e) {
           // ignore polling errors
         }
@@ -461,8 +520,7 @@ export default function App() {
         body: JSON.stringify({ sessionId: sid, message: requestMessage })
       });
       const data = await r.json();
-      pollingStopped = true;
-      if (pollingTimer) window.clearInterval(pollingTimer);
+      stopProgressTimers();
       removeMessage(loadingId);
 
       if (!r.ok) {
@@ -473,13 +531,11 @@ export default function App() {
       pushMessage("assistant", renderAssistantHtml(data));
       setChartPayload(data.chart || null);
     } catch (err) {
-      pollingStopped = true;
-      if (pollingTimer) window.clearInterval(pollingTimer);
+      stopProgressTimers();
       removeMessage(loadingId);
       pushMessage("assistant", `<span class="text-red-600">${esc(err.message || "请求失败")}</span>`);
     } finally {
-      pollingStopped = true;
-      if (pollingTimer) window.clearInterval(pollingTimer);
+      stopProgressTimers();
       setIsSending(false);
     }
   };
@@ -507,9 +563,9 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8">
+    <div className="max-w-[1240px] mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
-        <h1 className="text-xl font-semibold">财务分析智能助手（Champion）</h1>
+        <h1 className="text-xl font-semibold">财务分析智能助手（Quentin）</h1>
         <div className="flex gap-2 flex-wrap">
           <button
             id="btnNew"
@@ -538,8 +594,8 @@ export default function App() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="md:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div
             id="messages"
             className="space-y-3 h-[520px] overflow-auto pr-2 overflow-x-hidden"
@@ -586,14 +642,14 @@ export default function App() {
           </div>
 
           <form
-            className="mt-2 flex gap-2"
+            className="mt-3 flex gap-2"
             onSubmit={(e) => {
               e.preventDefault();
               send(input);
             }}
           >
             <input
-              className="flex-1 rounded-xl border border-slate-200 px-4 py-3 min-w-0 w-full"
+              className="flex-1 rounded-xl border border-slate-200 px-4 py-3 min-w-0 w-full text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
               placeholder="输入问题，例如：TSLA 最新10-K 风险因素要点？"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -607,23 +663,91 @@ export default function App() {
             </button>
           </form>
 
-          <div className="text-xs text-slate-500 mt-2">
+          <div className="text-xs text-slate-600 leading-relaxed mt-3">
             API Key 全部由服务端 <span className="mono">server/.env</span> 管理；如需启用年报 embedding
             重排，请在 <span className="mono">server/.env</span> 配置 <span className="mono">GOOGLE_API_KEY</span>。
           </div>
 
-          <div className="text-[11px] text-slate-400 mt-2">Session: {sessionId || "未创建"}</div>
+          <div className="text-xs text-slate-500 mt-2">Session: {sessionId || "未创建"}</div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl p-4">
-          <div className="font-medium mb-2">图表</div>
-          <div className="h-[260px]">
-            <canvas id="chart" ref={chartCanvasRef} height="260" />
+        {analysisMode === "deep" ? (
+          <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-start justify-between gap-3 pb-3 mb-3 border-b border-slate-100">
+              <div className="font-semibold text-slate-900 text-lg leading-none whitespace-nowrap">🔥 市场热点</div>
+              <div className="flex items-center gap-2 text-[11px] text-slate-500 whitespace-nowrap">
+                {hotspotsUpdatedAt ? (
+                  <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                    更新于 {formatHotspotUpdatedAt(hotspotsUpdatedAt)}
+                  </span>
+                ) : null}
+                {hotspotsTraceUrl ? (
+                  <a
+                    className="underline text-slate-600 hover:text-slate-800"
+                    href={hotspotsTraceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    查看来源
+                  </a>
+                ) : null}
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+                  onClick={() => {
+                    void loadHotspots();
+                  }}
+                  disabled={hotspotsLoading}
+                >
+                  {hotspotsLoading ? "刷新中..." : "刷新"}
+                </button>
+              </div>
+            </div>
+            {hotspotsError ? <div className="text-xs text-rose-600 mb-2">{hotspotsError}</div> : null}
+            {!hotspotsError && hotspots.length === 0 && !hotspotsLoading ? (
+              <div className="text-xs text-slate-500 mb-2">暂无热点数据</div>
+            ) : null}
+            <div className="hotspot-scroll h-[520px] overflow-y-auto pr-1 space-y-2">
+              {hotspots.map((item, idx) => {
+                const title = String(item?.title || "").trim();
+                const category = String(item?.category || "市场观察").trim();
+                const symbol = String(item?.symbol || "").trim();
+                if (!title) return null;
+                return (
+                  <button
+                    key={`${idx}-${title}`}
+                    type="button"
+                    className="w-full text-left rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2.5 hover:bg-white hover:border-slate-300 transition"
+                    onClick={() => {
+                      send(title);
+                    }}
+                    disabled={isSending}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <span className="inline-block mr-2 px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-600 text-[11px]">
+                          {category}
+                        </span>
+                        <span className="text-sm leading-relaxed text-slate-800">{title}</span>
+                      </div>
+                      <div className="text-xs text-amber-600 whitespace-nowrap">{symbol || "市场热点"}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div id="chartNote" className="text-xs text-slate-500 mt-2">
-            {chartNote}
+        ) : (
+          <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <div className="font-medium mb-2">图表</div>
+            <div className="h-[260px]">
+              <canvas id="chart" ref={chartCanvasRef} height="260" />
+            </div>
+            <div id="chartNote" className="text-xs text-slate-500 mt-2">
+              {chartNote}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -143,6 +143,12 @@ type ChatProgress struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
+type MarketHotspot struct {
+	Category string `json:"category"`
+	Title    string `json:"title"`
+	Symbol   string `json:"symbol"`
+}
+
 var (
 	storeMu      sync.RWMutex
 	sessions     = map[string][]ChatMessage{}
@@ -163,6 +169,7 @@ func main() {
 	mux.HandleFunc("/api/source/akshare", handleTushareSource)
 	mux.HandleFunc("/api/source/eodhd", handleEODHDSource)
 	mux.HandleFunc("/api/source/valuecell", handleValueCellSource)
+	mux.HandleFunc("/api/market/hotspots", handleMarketHotspots)
 	mux.HandleFunc("/api/history/", handleHistory)
 	mux.HandleFunc("/api/report/", handleReport)
 
@@ -602,22 +609,36 @@ func handleChat(w http.ResponseWriter, r *http.Request) {
 				"note":  msg,
 			})
 		} else {
-			evidence = strings.TrimSpace("【ValueCell 深度分析原始结果】\n" + deepText)
-			valueCellSucceeded = true
-			citations = append(citations, map[string]any{
-				"id":    fmt.Sprintf("F%d", len(citations)+1),
-				"type":  "cn_finance",
-				"title": "ValueCell 深度分析查询记录",
-				"url":   traceURL,
-				"note":  "点击查看本次深度分析查询参数",
-			})
-			citations = append(citations, map[string]any{
-				"id":    fmt.Sprintf("F%d", len(citations)+1),
-				"type":  "cn_finance",
-				"title": "ValueCell 官方仓库",
-				"url":   sourceURL,
-				"note":  "ValueCell 项目入口",
-			})
+			weakResultReason := weakValueCellResultReason(deepText)
+			if weakResultReason != "" {
+				msg := "ValueCell 返回结果未包含可核验数据：" + weakResultReason
+				recordDataFailure(msg)
+				deepFallbackNotice = "深度分析未获取到有效结构化结果，已自动回退到模型回答。"
+				citations = append(citations, map[string]any{
+					"id":    fmt.Sprintf("F%d", len(citations)+1),
+					"type":  "debug",
+					"title": "深度分析查询记录",
+					"url":   traceURL,
+					"note":  msg,
+				})
+			} else {
+				evidence = strings.TrimSpace("【ValueCell 深度分析原始结果】\n" + deepText)
+				valueCellSucceeded = true
+				citations = append(citations, map[string]any{
+					"id":    fmt.Sprintf("F%d", len(citations)+1),
+					"type":  "cn_finance",
+					"title": "ValueCell 深度分析查询记录",
+					"url":   traceURL,
+					"note":  "点击查看本次深度分析查询参数",
+				})
+				citations = append(citations, map[string]any{
+					"id":    fmt.Sprintf("F%d", len(citations)+1),
+					"type":  "cn_finance",
+					"title": "ValueCell 官方仓库",
+					"url":   sourceURL,
+					"note":  "ValueCell 项目入口",
+				})
+			}
 		}
 
 		if strings.TrimSpace(evidence) != "" {
@@ -3806,6 +3827,43 @@ func handleEODHDSource(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(content))
 }
 
+func handleMarketHotspots(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeJSON(w, 405, map[string]any{"error": "method not allowed"})
+		return
+	}
+	limit := 8
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		if n, err := strconv.Atoi(raw); err == nil && n > 0 {
+			limit = n
+		}
+	}
+	if limit > 20 {
+		limit = 20
+	}
+	if limit < 1 {
+		limit = 1
+	}
+
+	items, traceURL, err := getMarketHotspotsFromValueCell(limit)
+	if err != nil {
+		writeJSON(w, 502, map[string]any{
+			"error":     err.Error(),
+			"source":    "valuecell",
+			"items":     []MarketHotspot{},
+			"traceUrl":  traceURL,
+			"updatedAt": time.Now().UTC().Format(time.RFC3339),
+		})
+		return
+	}
+	writeJSON(w, 200, map[string]any{
+		"source":    "valuecell",
+		"items":     items,
+		"traceUrl":  traceURL,
+		"updatedAt": time.Now().UTC().Format(time.RFC3339),
+	})
+}
+
 func handleValueCellSource(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		writeTraceHTML(w, "请求错误", "仅支持 GET 请求。")
@@ -3813,9 +3871,10 @@ func handleValueCellSource(w http.ResponseWriter, r *http.Request) {
 	}
 	query := strings.TrimSpace(r.URL.Query().Get("query"))
 	companies := strings.TrimSpace(r.URL.Query().Get("companies"))
+	mode := strings.TrimSpace(r.URL.Query().Get("mode"))
 	apiURL := strings.TrimSpace(os.Getenv("VALUECELL_API_URL"))
 	if apiURL == "" {
-		apiURL = "http://127.0.0.1:8000/api/v1"
+		apiURL = "http://127.0.0.1:8010/api/v1"
 	}
 	agentName := strings.TrimSpace(os.Getenv("VALUECELL_AGENT_NAME"))
 	if agentName == "" {
@@ -3823,9 +3882,16 @@ func handleValueCellSource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	content := "<div><b>模式：</b>ValueCell 深度分析</div>"
+	if mode != "" {
+		content += "<div><b>子模式：</b>" + htmlEsc(mode) + "</div>"
+	}
 	content += "<div><b>问题：</b>" + htmlEsc(query) + "</div>"
 	content += "<div><b>公司：</b>" + htmlEsc(companies) + "</div>"
-	content += "<div><b>接口：</b>" + htmlEsc(apiURL+"/agents/stream") + "</div>"
+	if strings.EqualFold(mode, "hotspots_crawl") {
+		content += "<div><b>抓取源：</b><a target=\"_blank\" href=\"" + htmlEsc(query) + "\">" + htmlEsc(query) + "</a></div>"
+	} else {
+		content += "<div><b>接口：</b>" + htmlEsc(apiURL+"/agents/stream") + "</div>"
+	}
 	content += "<div><b>Agent：</b>" + htmlEsc(agentName) + "</div>"
 	content += "<div style=\"margin-top:10px;\"><a target=\"_blank\" href=\"https://github.com/ValueCell-ai/valuecell\">ValueCell 官方仓库</a></div>"
 	writeTraceHTML(w, "ValueCell 深度分析查询记录", content)
@@ -3885,7 +3951,7 @@ func callValueCellConfigJSON(method, endpoint string, payload any) error {
 func bootstrapValueCellProviderFromGLM() {
 	apiRoot := strings.TrimSpace(os.Getenv("VALUECELL_API_URL"))
 	if apiRoot == "" {
-		apiRoot = "http://127.0.0.1:8000/api/v1"
+		apiRoot = "http://127.0.0.1:8010/api/v1"
 	}
 	apiRoot = strings.TrimRight(apiRoot, "/")
 	if !strings.HasSuffix(strings.ToLower(apiRoot), "/api/v1") {
@@ -3901,23 +3967,34 @@ func bootstrapValueCellProviderFromGLM() {
 	}
 	baseURL := deriveGLMCompatibleBaseURL(getenv("GLM_API_URL", glmURL))
 
-	_ = callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/default", map[string]any{
+	if err := callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/default", map[string]any{
 		"provider": "openai-compatible",
-	})
-	_ = callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/openai-compatible/config", map[string]any{
+	}); err != nil {
+		log.Printf("[valuecell-bootstrap] set default provider failed: %v", err)
+	}
+	if err := callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/openai-compatible/config", map[string]any{
 		"api_key":  glmKey,
 		"base_url": baseURL,
-	})
-	_ = callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/openai-compatible/default-model", map[string]any{
+	}); err != nil {
+		log.Printf("[valuecell-bootstrap] update provider config failed: %v", err)
+	}
+	if err := callValueCellConfigJSON(http.MethodPut, apiRoot+"/models/providers/openai-compatible/default-model", map[string]any{
 		"model_id":   modelID,
 		"model_name": modelID,
-	})
+	}); err != nil {
+		log.Printf("[valuecell-bootstrap] set default model failed: %v", err)
+	}
 }
 
 func getDeepAnalysisFromValueCell(query string, companies []string) (string, string, error) {
 	bootstrapValueCellProviderFromGLM()
 	callBridge := func(agentName string) ([]byte, error) {
 		args := []string{"--query", query}
+		apiURL := strings.TrimSpace(os.Getenv("VALUECELL_API_URL"))
+		if apiURL == "" {
+			apiURL = "http://127.0.0.1:8010/api/v1"
+		}
+		args = append(args, "--api-url", apiURL)
 		if len(companies) > 0 {
 			args = append(args, "--companies", strings.Join(companies, ","))
 		}
@@ -3982,14 +4059,415 @@ CONTINUE_PARSE:
 	return analysis, sourceURL, nil
 }
 
+func getMarketHotspotsFromValueCell(limit int) ([]MarketHotspot, string, error) {
+	bootstrapValueCellProviderFromGLM()
+	if limit <= 0 {
+		limit = 8
+	}
+	if limit > 20 {
+		limit = 20
+	}
+	lang := strings.TrimSpace(os.Getenv("VALUECELL_HOTSPOT_LANG"))
+	if lang == "" {
+		lang = "zh"
+	}
+
+	if items, traceURL, err := getMarketHotspotsFromCrawler(limit, lang); err == nil && len(items) > 0 {
+		return items, traceURL, nil
+	}
+
+	items, traceURL, err := getMarketHotspotsFromValueCellAgent(limit)
+	if err != nil {
+		return nil, traceURL, err
+	}
+	return items, traceURL, nil
+}
+
+func getMarketHotspotsFromCrawler(limit int, language string) ([]MarketHotspot, string, error) {
+	lang := strings.TrimSpace(language)
+	if lang == "" {
+		lang = "zh"
+	}
+	sourceURL := "https://valuecell.ai/api/v1/leaderboard/?language=" + url.QueryEscape(lang)
+	traceURL := "/api/source/valuecell?mode=hotspots_crawl&query=" + url.QueryEscape(sourceURL)
+	out, err := runValueCellHotspotCrawler("--limit", strconv.Itoa(limit), "--language", lang)
+	if err != nil {
+		return nil, traceURL, err
+	}
+	var resp struct {
+		Items     []MarketHotspot `json:"items"`
+		SourceURL string          `json:"source_url"`
+		Error     string          `json:"error"`
+	}
+	if e := json.Unmarshal(out, &resp); e != nil {
+		return nil, traceURL, e
+	}
+	if strings.TrimSpace(resp.Error) != "" {
+		return nil, traceURL, fmt.Errorf("%s", strings.TrimSpace(resp.Error))
+	}
+	if strings.TrimSpace(resp.SourceURL) != "" {
+		sourceURL = strings.TrimSpace(resp.SourceURL)
+		traceURL = "/api/source/valuecell?mode=hotspots_crawl&query=" + url.QueryEscape(sourceURL)
+	}
+	items := normalizeHotspotItems(resp.Items, limit)
+	if len(items) == 0 {
+		return nil, traceURL, fmt.Errorf("crawler returned empty hotspots")
+	}
+	return items, traceURL, nil
+}
+
+func getMarketHotspotsFromValueCellAgent(limit int) ([]MarketHotspot, string, error) {
+	query := fmt.Sprintf(
+		"请给出%d条“市场热点提问”，覆盖A股/港股/美股活跃方向。优先输出格式：category|title|symbol@@category|title|symbol。若无法输出该格式，再输出严格JSON：{\"items\":[{\"category\":\"个股探索|市场观察|行业研究|A股|港股|美股\",\"title\":\"具体可分析的问题\",\"symbol\":\"公司简称或板块简称\"}]}. 禁止模板句和占位词。",
+		limit,
+	)
+	apiURL := strings.TrimSpace(os.Getenv("VALUECELL_API_URL"))
+	if apiURL == "" {
+		apiURL = "http://127.0.0.1:8010/api/v1"
+	}
+	agentName := strings.TrimSpace(os.Getenv("VALUECELL_HOTSPOT_AGENT"))
+	if agentName == "" {
+		agentName = "NewsAgent"
+	}
+	out, err := runValueCellBridge("--query", query, "--api-url", apiURL, "--agent-name", agentName)
+	traceURL := "/api/source/valuecell?mode=hotspots&query=" + url.QueryEscape(query)
+	if err != nil {
+		return nil, traceURL, err
+	}
+	var resp struct {
+		AnalysisText string   `json:"analysis_text"`
+		ToolEvents   []string `json:"tool_events"`
+		SourceURL    string   `json:"source_url"`
+		Error        string   `json:"error"`
+	}
+	if e := json.Unmarshal(out, &resp); e != nil {
+		return nil, traceURL, e
+	}
+	if strings.TrimSpace(resp.Error) != "" {
+		return nil, traceURL, fmt.Errorf("%s", strings.TrimSpace(resp.Error))
+	}
+	text := strings.TrimSpace(resp.AnalysisText)
+	items := parseMarketHotspotsFromText(text, limit)
+	if len(items) == 0 {
+		return nil, traceURL, fmt.Errorf("valuecell returned no structured hotspots")
+	}
+	items = normalizeHotspotItems(items, limit)
+	return items, traceURL, nil
+}
+
+func normalizeHotspotItems(items []MarketHotspot, limit int) []MarketHotspot {
+	now := time.Now()
+	out := normalizeMarketHotspots(items, limit)
+	if len(out) > limit {
+		out = out[:limit]
+	}
+	for i := range out {
+		if strings.TrimSpace(out[i].Category) == "" {
+			out[i].Category = "市场观察"
+		}
+		if strings.TrimSpace(out[i].Symbol) == "" {
+			out[i].Symbol = now.Format("01-02") + "热点"
+		}
+	}
+	return out
+}
+
+func parseMarketHotspotsFromText(text string, limit int) []MarketHotspot {
+	text = strings.TrimSpace(text)
+	if text == "" {
+		return nil
+	}
+	candidates := extractJSONCandidates(text)
+	for _, cand := range candidates {
+		if items := decodeMarketHotspotsJSON(cand); len(items) > 0 {
+			return normalizeMarketHotspots(items, limit)
+		}
+	}
+	if items := parseMarketHotspotsPipeFormat(text, limit); len(items) > 0 {
+		return normalizeMarketHotspots(items, limit)
+	}
+	items := []MarketHotspot{}
+	lines := strings.Split(text, "\n")
+	for _, ln := range lines {
+		line := strings.TrimSpace(ln)
+		line = strings.TrimPrefix(line, "-")
+		line = strings.TrimPrefix(line, "*")
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		if line == "```" || strings.HasPrefix(strings.ToLower(line), "```json") {
+			continue
+		}
+		if strings.Contains(strings.ToLower(line), "valuecell 工具调用") {
+			continue
+		}
+		if parsed := decodeMarketHotspotsJSON(line); len(parsed) > 0 {
+			items = appendBoundedHotspots(items, parsed, limit)
+			if limit > 0 && len(items) >= limit {
+				break
+			}
+			continue
+		}
+		item := MarketHotspot{
+			Category: "市场观察",
+			Title:    line,
+		}
+		if m := regexp.MustCompile(`[(（]([A-Za-z0-9._-]{2,20})[)）]`).FindStringSubmatch(line); len(m) == 2 {
+			item.Symbol = strings.TrimSpace(m[1])
+		}
+		items = append(items, item)
+		if len(items) >= limit {
+			break
+		}
+	}
+	return normalizeMarketHotspots(items, limit)
+}
+
+func appendBoundedHotspots(dst []MarketHotspot, src []MarketHotspot, limit int) []MarketHotspot {
+	for _, one := range src {
+		dst = append(dst, one)
+		if limit > 0 && len(dst) >= limit {
+			break
+		}
+	}
+	return dst
+}
+
+func parseMarketHotspotsPipeFormat(text string, limit int) []MarketHotspot {
+	raw := strings.TrimSpace(text)
+	if raw == "" || !strings.Contains(raw, "|") {
+		return nil
+	}
+	raw = strings.ReplaceAll(raw, "\n", "")
+	raw = strings.ReplaceAll(raw, "分类|问题|标的", "")
+	raw = strings.ReplaceAll(raw, "category|title|symbol", "")
+	markers := []string{
+		"个股探索|", "市场观察|", "行业研究|", "宏观观察|", "主题轮动|",
+		"A股|", "港股|", "美股|", "a股|",
+	}
+	for _, mk := range markers {
+		raw = strings.ReplaceAll(raw, mk, "@@"+mk)
+	}
+	raw = strings.TrimSpace(strings.TrimPrefix(raw, "@@"))
+	parts := strings.Split(raw, "@@")
+	items := make([]MarketHotspot, 0, len(parts))
+	for _, one := range parts {
+		seg := strings.TrimSpace(one)
+		if seg == "" {
+			continue
+		}
+		p := strings.SplitN(seg, "|", 3)
+		if len(p) < 3 {
+			continue
+		}
+		items = append(items, MarketHotspot{
+			Category: strings.TrimSpace(p[0]),
+			Title:    strings.TrimSpace(p[1]),
+			Symbol:   strings.TrimSpace(p[2]),
+		})
+		if limit > 0 && len(items) >= limit {
+			break
+		}
+	}
+	return items
+}
+
+func extractJSONCandidates(text string) []string {
+	out := []string{}
+	add := func(s string) {
+		s = strings.TrimSpace(s)
+		if s == "" {
+			return
+		}
+		for _, ex := range out {
+			if ex == s {
+				return
+			}
+		}
+		out = append(out, s)
+	}
+	add(text)
+	if i := strings.Index(text, "```json"); i >= 0 {
+		rest := text[i+7:]
+		if j := strings.Index(rest, "```"); j > 0 {
+			add(rest[:j])
+		}
+	}
+	if i := strings.Index(text, "["); i >= 0 {
+		if j := strings.LastIndex(text, "]"); j > i {
+			add(text[i : j+1])
+		}
+	}
+	if i := strings.Index(text, "{"); i >= 0 {
+		if j := strings.LastIndex(text, "}"); j > i {
+			add(text[i : j+1])
+		}
+	}
+	return out
+}
+
+func decodeMarketHotspotsJSON(raw string) []MarketHotspot {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return nil
+	}
+	var direct []MarketHotspot
+	if err := json.Unmarshal([]byte(raw), &direct); err == nil && len(direct) > 0 {
+		return direct
+	}
+	var wrapped struct {
+		Items    []MarketHotspot `json:"items"`
+		Hotspots []MarketHotspot `json:"hotspots"`
+		Data     []MarketHotspot `json:"data"`
+	}
+	if err := json.Unmarshal([]byte(raw), &wrapped); err == nil {
+		if len(wrapped.Items) > 0 {
+			return wrapped.Items
+		}
+		if len(wrapped.Hotspots) > 0 {
+			return wrapped.Hotspots
+		}
+		if len(wrapped.Data) > 0 {
+			return wrapped.Data
+		}
+	}
+	var generic []map[string]any
+	if err := json.Unmarshal([]byte(raw), &generic); err == nil && len(generic) > 0 {
+		items := make([]MarketHotspot, 0, len(generic))
+		for _, row := range generic {
+			items = append(items, MarketHotspot{
+				Category: firstNonEmptyString(row, "category", "type", "tag", "label", "分类", "类别", "赛道"),
+				Title:    firstNonEmptyString(row, "title", "question", "topic", "content", "问题", "题目", "主题"),
+				Symbol:   firstNonEmptyString(row, "symbol", "ticker", "stock", "company", "标的", "代码", "公司", "股票"),
+			})
+		}
+		return items
+	}
+	var genericWrap map[string]any
+	if err := json.Unmarshal([]byte(raw), &genericWrap); err == nil {
+		for _, k := range []string{"items", "hotspots", "data", "list"} {
+			if arr, ok := genericWrap[k].([]any); ok && len(arr) > 0 {
+				items := make([]MarketHotspot, 0, len(arr))
+				for _, one := range arr {
+					if row, ok := one.(map[string]any); ok {
+						items = append(items, MarketHotspot{
+							Category: firstNonEmptyString(row, "category", "type", "tag", "label", "分类", "类别", "赛道"),
+							Title:    firstNonEmptyString(row, "title", "question", "topic", "content", "问题", "题目", "主题"),
+							Symbol:   firstNonEmptyString(row, "symbol", "ticker", "stock", "company", "标的", "代码", "公司", "股票"),
+						})
+					}
+				}
+				return items
+			}
+		}
+	}
+	return nil
+}
+
+func firstNonEmptyString(m map[string]any, keys ...string) string {
+	for _, k := range keys {
+		if v, ok := m[k]; ok {
+			s := strings.TrimSpace(asString(v))
+			if s != "" && s != "<nil>" {
+				return s
+			}
+		}
+	}
+	return ""
+}
+
+func normalizeMarketHotspots(items []MarketHotspot, limit int) []MarketHotspot {
+	out := make([]MarketHotspot, 0, len(items))
+	seen := map[string]bool{}
+	normalizeCategory := func(raw string) string {
+		c := strings.TrimSpace(strings.Trim(raw, `"'`))
+		if c == "" {
+			return "市场观察"
+		}
+		c = strings.ReplaceAll(c, "｜", "|")
+		c = strings.ReplaceAll(c, "／", "/")
+		parts := strings.FieldsFunc(c, func(r rune) bool {
+			return r == '|' || r == '/' || r == '、' || r == ',' || r == '，'
+		})
+		if len(parts) > 0 {
+			c = strings.TrimSpace(parts[0])
+		}
+		switch c {
+		case "个股探索", "市场观察", "行业研究", "宏观观察", "主题轮动", "A股", "a股", "港股", "美股":
+			if c == "a股" {
+				return "A股"
+			}
+			return c
+		}
+		switch {
+		case strings.Contains(c, "个股"):
+			return "个股探索"
+		case strings.Contains(c, "行业"):
+			return "行业研究"
+		case strings.Contains(c, "宏观"):
+			return "宏观观察"
+		case strings.Contains(c, "主题"):
+			return "主题轮动"
+		case strings.Contains(strings.ToLower(c), "a股") || strings.Contains(c, "A股"):
+			return "A股"
+		case strings.Contains(c, "港"):
+			return "港股"
+		case strings.Contains(c, "美"):
+			return "美股"
+		default:
+			return "市场观察"
+		}
+	}
+	for _, it := range items {
+		title := strings.TrimSpace(strings.Trim(it.Title, `"'`))
+		if title == "" {
+			continue
+		}
+		lowerTitle := strings.ToLower(title)
+		if strings.Contains(lowerTitle, "transparent proxy") ||
+			strings.Contains(title, "可直接发问") ||
+			strings.Contains(title, "占位") ||
+			strings.Contains(title, "来源：") ||
+			strings.Contains(title, "[来源") ||
+			strings.Contains(title, "关联标的") {
+			continue
+		}
+		category := normalizeCategory(it.Category)
+		symbol := strings.TrimSpace(it.Symbol)
+		key := strings.ToLower(category + "|" + title + "|" + symbol)
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		out = append(out, MarketHotspot{
+			Category: category,
+			Title:    title,
+			Symbol:   symbol,
+		})
+		if limit > 0 && len(out) >= limit {
+			break
+		}
+	}
+	return out
+}
+
 func runValueCellBridge(args ...string) ([]byte, error) {
+	return runPythonBridgeScript("VALUECELL_BRIDGE_SCRIPT", "./valuecell_bridge.py", "valuecell bridge", args...)
+}
+
+func runValueCellHotspotCrawler(args ...string) ([]byte, error) {
+	return runPythonBridgeScript("VALUECELL_HOTSPOT_SCRIPT", "./valuecell_hotspots_bridge.py", "valuecell hotspot crawler", args...)
+}
+
+func runPythonBridgeScript(scriptEnvKey, defaultScript, errorPrefix string, args ...string) ([]byte, error) {
 	pythonBin := strings.TrimSpace(os.Getenv("PYTHON_BIN"))
 	if pythonBin == "" {
 		pythonBin = "python"
 	}
-	scriptPath := strings.TrimSpace(os.Getenv("VALUECELL_BRIDGE_SCRIPT"))
+	scriptPath := strings.TrimSpace(os.Getenv(scriptEnvKey))
 	if scriptPath == "" {
-		scriptPath = "./valuecell_bridge.py"
+		scriptPath = defaultScript
 	}
 	cmdArgs := append([]string{scriptPath}, args...)
 	cmd := exec.Command(pythonBin, cmdArgs...)
@@ -3997,22 +4475,22 @@ func runValueCellBridge(args ...string) ([]byte, error) {
 	filtered := make([]string, 0, len(env))
 	for _, kv := range env {
 		key := strings.ToUpper(strings.SplitN(kv, "=", 2)[0])
-		if key == "PYTHONUTF8" || key == "PYTHONIOENCODING" {
+		if key == "PYTHONUTF8" || key == "PYTHONIOENCODING" || key == "PYTHONWARNINGS" {
 			continue
 		}
 		filtered = append(filtered, kv)
 	}
-	filtered = append(filtered, "PYTHONUTF8=1", "PYTHONIOENCODING=UTF-8")
+	filtered = append(filtered, "PYTHONUTF8=1", "PYTHONIOENCODING=UTF-8", "PYTHONWARNINGS=ignore")
 	cmd.Env = filtered
 	out, err := cmd.Output()
 	if err != nil {
 		if ee, ok := err.(*exec.ExitError); ok {
 			msg := strings.TrimSpace(string(ee.Stderr))
 			if msg != "" {
-				return nil, fmt.Errorf("valuecell bridge error: %s", msg)
+				return nil, fmt.Errorf("%s error: %s", errorPrefix, msg)
 			}
 		}
-		return nil, fmt.Errorf("valuecell bridge error: %w", err)
+		return nil, fmt.Errorf("%s error: %w", errorPrefix, err)
 	}
 	return out, nil
 }
@@ -4528,6 +5006,53 @@ func buildDeepModeFailureAnswer(notes []string) string {
 		msg += "\n\n当前失败信息：\n- " + strings.Join(notes, "\n- ")
 	}
 	return msg
+}
+
+func weakValueCellResultReason(text string) string {
+	t := strings.TrimSpace(text)
+	if t == "" {
+		return "返回内容为空"
+	}
+	lower := strings.ToLower(t)
+	errorMarkers := []string{
+		"planner is unavailable",
+		"failed to initialize model/provider",
+		"please configure a valid api key or provider settings",
+		"failed to resolve agent card",
+		"error executing task",
+		"valuecell returned empty analysis",
+		"valuecell endpoints unavailable",
+	}
+	for _, m := range errorMarkers {
+		if strings.Contains(lower, m) {
+			return "ValueCell 内部执行异常"
+		}
+	}
+	noDataMarkers := []string{
+		"无法访问具体的财务数据",
+		"无法访问具体财务数据",
+		"无法提供",
+		"无法直接访问实时数据库",
+		"通常，您可以通过以下途径获取",
+		"you can obtain",
+		"unable to access",
+		"cannot access",
+	}
+	hasNoDataMarker := false
+	for _, m := range noDataMarkers {
+		if strings.Contains(lower, strings.ToLower(m)) {
+			hasNoDataMarker = true
+			break
+		}
+	}
+	if !hasNoDataMarker {
+		return ""
+	}
+	hasNumberEvidence := regexp.MustCompile(`\d{4}|\d+(\.\d+)?%|\d{2,}`).MatchString(t)
+	if hasNumberEvidence {
+		return ""
+	}
+	return "返回内容为通用说明，未提供可核验财务结果"
 }
 
 func buildStockRankTraceURL(limit, windowDays int) string {

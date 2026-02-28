@@ -59,6 +59,27 @@ def main() -> int:
     server_env = _read_dotenv(root / "server" / ".env")
 
     go_exe = go_dir / "finassistant_go.exe"
+    go_main = go_dir / "main.go"
+    need_build = (not go_exe.exists()) or (
+        go_main.exists() and go_exe.exists() and go_main.stat().st_mtime > go_exe.stat().st_mtime
+    )
+    if need_build:
+        print("[build] go-service changed, building finassistant_go.exe ...")
+        build = subprocess.run(
+            ["go", "build", "-o", "finassistant_go.exe", "."],
+            cwd=str(go_dir),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if build.returncode != 0:
+            print("[error] go build failed")
+            if build.stdout.strip():
+                print(build.stdout.strip())
+            if build.stderr.strip():
+                print(build.stderr.strip())
+            return 1
     if not go_exe.exists():
         print(f"[error] missing {go_exe}")
         return 1
@@ -67,16 +88,19 @@ def main() -> int:
     go_env["VALUECELL_API_URL"] = "http://127.0.0.1:8010/api/v1"
     go_env["VALUECELL_AGENT_NAME"] = ""
 
-    go_log = open(root / "_go_backend.log", "w", encoding="utf-8")
-    subprocess.Popen(
-        [str(go_exe)],
-        cwd=str(go_dir),
-        env=go_env,
-        stdout=go_log,
-        stderr=subprocess.STDOUT,
-        creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-    )
-    print("[ok] started go backend")
+    if is_port_open("127.0.0.1", 3000):
+        print("[ok] go backend already running on :3000, reuse existing process")
+    else:
+        go_log = open(root / "_go_backend.log", "w", encoding="utf-8")
+        subprocess.Popen(
+            [str(go_exe)],
+            cwd=str(go_dir),
+            env=go_env,
+            stdout=go_log,
+            stderr=subprocess.STDOUT,
+            creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+        )
+        print("[ok] started go backend")
 
     if vc_dir.exists():
         vc_env = os.environ.copy()
@@ -92,26 +116,29 @@ def main() -> int:
         ).strip()
         llm_model = (vc_env.get("LLM_MODEL") or server_env.get("LLM_MODEL") or "glm-4-flash").strip()
 
-        if glm_key and not vc_env.get("OPENAI_COMPATIBLE_API_KEY"):
+        if glm_key:
             vc_env["OPENAI_COMPATIBLE_API_KEY"] = glm_key
-        if not vc_env.get("OPENAI_COMPATIBLE_BASE_URL"):
-            vc_env["OPENAI_COMPATIBLE_BASE_URL"] = _glm_base_url(glm_api)
-        vc_env.setdefault("PRIMARY_PROVIDER", "openai-compatible")
-        vc_env.setdefault("SUPER_AGENT_PROVIDER", "openai-compatible")
-        vc_env.setdefault("RESEARCH_AGENT_PROVIDER", "openai-compatible")
-        vc_env.setdefault("PLANNER_MODEL_ID", llm_model)
-        vc_env.setdefault("SUPER_AGENT_MODEL_ID", llm_model)
-        vc_env.setdefault("RESEARCH_AGENT_MODEL_ID", llm_model)
-        vc_log = open(root / "_valuecell.log", "w", encoding="utf-8")
-        subprocess.Popen(
-            [sys.executable, "-m", "valuecell.server.main"],
-            cwd=str(vc_dir),
-            env=vc_env,
-            stdout=vc_log,
-            stderr=subprocess.STDOUT,
-            creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-        )
-        print("[ok] started valuecell")
+        vc_env["OPENAI_COMPATIBLE_BASE_URL"] = _glm_base_url(glm_api)
+        vc_env["AUTO_DETECT_PROVIDER"] = "false"
+        vc_env["PRIMARY_PROVIDER"] = "openai-compatible"
+        vc_env["SUPER_AGENT_PROVIDER"] = "openai-compatible"
+        vc_env["RESEARCH_AGENT_PROVIDER"] = "openai-compatible"
+        vc_env["PLANNER_MODEL_ID"] = llm_model
+        vc_env["SUPER_AGENT_MODEL_ID"] = llm_model
+        vc_env["RESEARCH_AGENT_MODEL_ID"] = llm_model
+        if is_port_open("127.0.0.1", 8010):
+            print("[ok] valuecell already running on :8010, reuse existing process")
+        else:
+            vc_log = open(root / "_valuecell.log", "w", encoding="utf-8")
+            subprocess.Popen(
+                [sys.executable, "-m", "valuecell.server.main"],
+                cwd=str(vc_dir),
+                env=vc_env,
+                stdout=vc_log,
+                stderr=subprocess.STDOUT,
+                creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+            )
+            print("[ok] started valuecell")
     else:
         print(f"[warn] valuecell directory not found: {vc_dir}")
 
